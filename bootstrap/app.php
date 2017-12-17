@@ -81,7 +81,7 @@ $router = $app->router;
  $app->register(App\Providers\AppServiceProvider::class);
  $app->register(App\Providers\AuthServiceProvider::class);
  $app->register(App\Providers\EventServiceProvider::class);
-
+ //$app->register(Matriphe\Larinfo\LarinfoServiceProvider::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes

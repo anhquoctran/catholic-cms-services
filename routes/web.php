@@ -11,6 +11,11 @@
 |
 */
 
-$router->get('/', function (){
-    return response()->json(["data" => "ok"]);
+$router->get('/', function () use ($router){
+
+    return response()->json(["data" => null]) ;
+});
+
+$router->get("/test/{data}", function ($data) {
+    return $data;
 });
