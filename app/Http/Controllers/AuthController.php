@@ -89,12 +89,12 @@ class AuthController extends Controller
      */
     public function putDisplayName(Request $request){
         $errorMessages = [
-            'display_name.required' => trans('validation.required', ['field' => trans('messages.display_name')]),
-            'display_name.max' => trans('validation.max.string', ['field' => trans('messages.display_name')]),
+            'new_name.required' => trans('validation.required', ['field' => trans('messages.display_name')]),
+            'new_name.max' => trans('validation.max.string', ['field' => trans('messages.display_name')]),
         ];
 
         $validator = Validator::make($request->all(), [
-            'display_name' => 'required|max:64',
+            'new_name' => 'required|max:64',
         ], $errorMessages);
 
         if ($validator->fails()) {
@@ -102,7 +102,7 @@ class AuthController extends Controller
         }
 
         $user = User::find(app('auth')->user()->id);
-        $user->display_name = $request->input('display_name');
+        $user->display_name = $request->input('new_name');
         $user->save();
 
         return $this->succeedResponse($user);
