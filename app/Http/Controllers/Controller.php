@@ -58,7 +58,7 @@ class Controller extends BaseController
     {
         $response = [
             'status' => Response::HTTP_OK,
-            'message' => $this->getMessage(Response::HTTP_OK),
+            'message' => [$this->getMessage(Response::HTTP_OK)],
             'success' => $status,
             'data' => []
         ];

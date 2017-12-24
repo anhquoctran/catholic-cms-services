@@ -22,5 +22,9 @@ $app->post('auth/login', 'AuthController@postLogin');
 
 $app->group(['middleware' => 'auth'], function ($app) {
 
+    /**
+     * Auth Route
+     */
+    $app->post('auth/logout', 'AuthController@postLogout');
 });
 

@@ -69,4 +69,14 @@ class AuthController extends Controller
 
         return $this->succeedResponse($user);
     }
+
+    /**
+     * Logout
+     *
+     * @return bool
+     */
+    public function postLogout()
+    {
+        return $this->succeedResponse();
+    }
 }
