@@ -107,4 +107,33 @@ class AuthController extends Controller
 
         return $this->succeedResponse($user);
     }
+
+    /**
+     * Edit password
+     *
+     * @param Request $request
+     *
+     * @return bool
+     */
+    public function putPassword(Request $request)
+    {
+        $errorMessages = [
+            'new_password.required' => trans('validation.required', ['field' => trans('messages.password')]),
+            'new_password.max' => trans('validation.max.string', ['field' => trans('messages.password')]),
+        ];
+
+        $validator = Validator::make($request->all(), [
+            'new_password' => 'required|max:64',
+        ], $errorMessages);
+
+        if ($validator->fails()) {
+            return $this->notValidateResponse($validator->errors());
+        }
+
+        $user = User::find(app('auth')->user()->id);
+        $user->password = Hash::make($request->input('new_password'));
+        $user->save();
+
+        return $this->succeedResponse($user);
+    }
 }
