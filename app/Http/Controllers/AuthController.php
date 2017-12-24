@@ -136,4 +136,17 @@ class AuthController extends Controller
 
         return $this->succeedResponse($user);
     }
+
+    /**
+     * Get login lastest
+     */
+    public function getLastest()
+    {
+        $lastest = LoginHistory::where('uid', app('auth')->user()->id)
+            ->orderBy('datetime_access', 'desc')
+            ->offset(1)
+            ->limit(1)->first();
+
+        return $this->succeedResponse($lastest);
+    }
 }

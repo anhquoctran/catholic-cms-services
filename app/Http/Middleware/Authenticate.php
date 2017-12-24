@@ -41,7 +41,7 @@ class Authenticate
                 'status' => Response::HTTP_UNAUTHORIZED,
                 'message' => [Response::$statusTexts[Response::HTTP_UNAUTHORIZED]],
                 'success' => false,
-                'data' => []
+                'data' => null
             ];
 
             return response()->json($response, Response::HTTP_UNAUTHORIZED);
