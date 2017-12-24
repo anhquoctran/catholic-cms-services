@@ -12,5 +12,15 @@
 */
 
 $app->get('/', function () use ($app) {
-    return $app->version();
+    return 'PING';
 });
+
+/**
+ * Login Route
+ */
+$app->post('auth/login', 'AuthController@postLogin');
+
+$app->group(['middleware' => 'auth'], function ($app) {
+
+});
+
