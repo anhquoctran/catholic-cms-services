@@ -26,5 +26,6 @@ $app->group(['middleware' => 'auth'], function ($app) {
      * Auth Route
      */
     $app->post('auth/logout', 'AuthController@postLogout');
+    $app->put('auth/display_name', 'AuthController@putDisplayName');
 });
 

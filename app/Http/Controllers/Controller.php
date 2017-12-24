@@ -60,15 +60,11 @@ class Controller extends BaseController
             'status' => Response::HTTP_OK,
             'message' => [$this->getMessage(Response::HTTP_OK)],
             'success' => $status,
-            'data' => []
+            'data' => empty($result) ? null : $result
         ];
 
         if (is_array($extraResponse)) {
             $response = array_merge($response, $extraResponse);
-        }
-
-        if (! is_null($result)) {
-            $response['data'] = $result;
         }
 
         $headerStatus = $this->getHeaderResponseStatusCode($response['status']);

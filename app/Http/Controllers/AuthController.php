@@ -28,8 +28,8 @@ class AuthController extends Controller
     public function postLogin(Request $request)
     {
         $errorMessages = [
-            'username.required' => trans('messages.login_username_is_required'),
-            'password.required' => trans('messages.login_password_is_required'),
+            'username.required' => trans('validation.required', ['field' => trans('messages.username')]),
+            'password.required' => trans('validation.required', ['field' => trans('messages.password')]),
         ];
 
         $validator = Validator::make($request->all(), [
@@ -78,5 +78,33 @@ class AuthController extends Controller
     public function postLogout()
     {
         return $this->succeedResponse();
+    }
+
+    /**
+     * Edit display name
+     *
+     * @param Request $request
+     *
+     * @return bool
+     */
+    public function putDisplayName(Request $request){
+        $errorMessages = [
+            'display_name.required' => trans('validation.required', ['field' => trans('messages.display_name')]),
+            'display_name.max' => trans('validation.max.string', ['field' => trans('messages.display_name')]),
+        ];
+
+        $validator = Validator::make($request->all(), [
+            'display_name' => 'required|max:64',
+        ], $errorMessages);
+
+        if ($validator->fails()) {
+            return $this->notValidateResponse($validator->errors());
+        }
+
+        $user = User::find(app('auth')->user()->id);
+        $user->display_name = $request->input('display_name');
+        $user->save();
+
+        return $this->succeedResponse($user);
     }
 }
