@@ -28,6 +28,6 @@ $app->group(['middleware' => 'auth'], function ($app) {
     $app->post('auth/logout', 'AuthController@postLogout');
     $app->put('auth/display_name', 'AuthController@putDisplayName');
     $app->put('auth/password', 'AuthController@putPassword');
-    $app->get('auth/latest', 'AuthController@getLastest');
+    $app->get('auth/latest', 'AuthController@getLatest');
 });
 

@@ -47,7 +47,7 @@ class AuthController extends Controller
             return $this->failResponse(Response::HTTP_BAD_REQUEST, [trans('messages.login_not_found_data')]);
         }
 
-        if (!Hash::check($request->input('password'), $user->password)) {
+        if (!Hash::check(base64_decode(base64_decode($request->input('password'))), $user->password)) {
             return $this->failResponse(Response::HTTP_BAD_REQUEST, [trans('messages.login_not_found_data')]);
         }
 
@@ -119,11 +119,10 @@ class AuthController extends Controller
     {
         $errorMessages = [
             'new_password.required' => trans('validation.required', ['field' => trans('messages.password')]),
-            'new_password.max' => trans('validation.max.string', ['field' => trans('messages.password')]),
         ];
 
         $validator = Validator::make($request->all(), [
-            'new_password' => 'required|max:64',
+            'new_password' => 'required',
         ], $errorMessages);
 
         if ($validator->fails()) {
@@ -131,7 +130,7 @@ class AuthController extends Controller
         }
 
         $user = User::find(app('auth')->user()->id);
-        $user->password = Hash::make($request->input('new_password'));
+        $user->password = Hash::make(base64_decode(base64_decode($request->input('new_password'))));
         $user->save();
 
         return $this->succeedResponse($user);
@@ -140,13 +139,17 @@ class AuthController extends Controller
     /**
      * Get login lastest
      */
-    public function getLastest()
+    public function getLatest()
     {
-        $lastest = LoginHistory::where('uid', app('auth')->user()->id)
+        $currentUserId = app('auth')->user()->id;
+        $latest = LoginHistory::where('uid', $currentUserId)
             ->orderBy('datetime_access', 'desc')
             ->offset(1)
             ->limit(1)->first();
 
-        return $this->succeedResponse($lastest);
+        $user = User::find($currentUserId);
+        $latest->user = $user;
+
+        return $this->succeedResponse($latest);
     }
 }
