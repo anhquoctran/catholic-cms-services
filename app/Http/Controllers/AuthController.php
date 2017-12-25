@@ -138,6 +138,8 @@ class AuthController extends Controller
 
     /**
      * Get login lastest
+     *
+     * @return bool
      */
     public function getLatest()
     {
@@ -151,5 +153,39 @@ class AuthController extends Controller
         $latest->user = $user;
 
         return $this->succeedResponse($latest);
+    }
+
+    /**
+     * Get list login history
+     *
+     * @param Request $request
+     *
+     * @return bool
+     */
+    public function getHistory(Request $request)
+    {
+        $errorMessages = [
+            'from.date_format' => trans('validation.date_format', ['field' => trans('messages.date_from')]),
+            'to.date_format' => trans('validation.date_format', ['field' => trans('messages.date_to')]),
+            'to.after_or_equal' => trans('validation.after_or_equal', ['from' => trans('messages.date_from'), 'to' => trans('messages.date_to')]),
+        ];
+
+        $validator = Validator::make($request->all(), [
+            'from' => 'date_format:Y-m-d|nullable',
+            'to' => 'date_format:Y-m-d|nullable|after_or_equal:from'
+        ], $errorMessages);
+
+        if ($validator->fails()) {
+            return $this->notValidateResponse($validator->errors());
+        }
+
+        $listLoginHistory = LoginHistory::select('*')->orderBy('datetime_access', 'DESC');
+
+        if (!empty($request->input('from')) && !empty($request->input('to'))) {
+            $listLoginHistory->where('datetime_access', '>=', date_format(date_create($request->input('from')), 'Y-m-d'))
+                ->where('datetime_access', '<=', date_format(date_create($request->input('to')), 'Y-m-d 23:59:59'));
+        }
+
+        return $this->succeedPaginationResponse($listLoginHistory->paginate($this->getPaginationPerPage()));
     }
 }

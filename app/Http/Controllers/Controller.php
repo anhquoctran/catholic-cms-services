@@ -4,9 +4,18 @@ namespace App\Http\Controllers;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
 use Illuminate\Http\Response;
+use Illuminate\Pagination\Paginator;
 
 class Controller extends BaseController
 {
+    /**
+     * Controller constructor.
+     */
+    public function __construct()
+    {
+        $this->resolvePaginationCurrentPage();
+    }
+
     /**
      * Check error code is app error
      *
@@ -129,5 +138,57 @@ class Controller extends BaseController
         }
 
         return $this->failResponse(Response::HTTP_BAD_REQUEST, $messages);
+    }
+
+    /**
+     * Get pagination per page
+     */
+    public function getPaginationPerPage()
+    {
+        $requestPerPage = (int) app()->make('request')->input('per_page');
+
+        return $requestPerPage ? $requestPerPage : DEFAULT_PAGINATION_PER_PAGE;
+    }
+
+    /**
+     * Auto resolve pagination current page by request param current_page
+     */
+    public function resolvePaginationCurrentPage()
+    {
+        Paginator::currentPageResolver(function () {
+            $request = app('request');
+            return $request->input('current_page', $request->input('page', 1));
+        });
+    }
+
+    /**
+     * Build success response json for pagination data
+     *
+     * @param object $pagination
+     * @param string $dataKey
+     * @param array $extra
+     *
+     * @return bool
+     */
+    public function succeedPaginationResponse($pagination, $dataKey = 'items', $extra = [])
+    {
+        $pagination->setPath('/' . app()->make('request')->path());
+
+        $tmpResult = $pagination->toArray();
+
+        $data = $tmpResult['data'];
+
+        unset($tmpResult['data']);
+        unset($tmpResult['next_page_url'],$tmpResult['prev_page_url'],$tmpResult['path']);
+
+        $result['pagination'] = $tmpResult;
+
+        $result[$dataKey] = $data;
+
+        if (!empty($extra) && is_array($extra)) {
+            $result = array_merge($result, $extra);
+        }
+
+        return $this->buildResponse(true, $result);
     }
 }
