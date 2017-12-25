@@ -12,7 +12,8 @@
 */
 
 $app->get('/', function () use ($app) {
-    return 'PING';
+    $array = ["message" => "Welcome to Sacred Heart Monastery REST Service!",  "success" => true, "code" => 200, "time" => date("F d, Y h:i:s")];
+    return response()->json($array);
 });
 
 /**
