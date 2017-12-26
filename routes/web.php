@@ -12,7 +12,8 @@
 */
 
 $app->get('/', function () use ($app) {
-    return 'PING';
+    $array = ["message" => "Welcome to Sacred Heart Monastery REST Service!",  "success" => true, "code" => 200, "time" => \Carbon\Carbon::now()];
+    return response()->json($array);
 });
 
 /**
@@ -28,6 +29,7 @@ $app->group(['middleware' => 'auth'], function ($app) {
     $app->post('auth/logout', 'AuthController@postLogout');
     $app->put('auth/display_name', 'AuthController@putDisplayName');
     $app->put('auth/password', 'AuthController@putPassword');
-    $app->get('auth/latest', 'AuthController@getLastest');
+    $app->post('auth/latest', 'AuthController@getLatest');
+    $app->post('auth/history', 'AuthController@getHistory');
 });
 

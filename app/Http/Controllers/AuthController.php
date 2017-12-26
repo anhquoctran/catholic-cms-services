@@ -20,8 +20,8 @@ class AuthController extends Controller
      * Authenticate
      *
      * @param Request $request
-     * @internal param string $username
-     * @internal param string $password
+     * @internal param string username
+     * @internal param string password
      *
      * @return bool
      */
@@ -47,7 +47,7 @@ class AuthController extends Controller
             return $this->failResponse(Response::HTTP_BAD_REQUEST, [trans('messages.login_not_found_data')]);
         }
 
-        if (!Hash::check($request->input('password'), $user->password)) {
+        if (!Hash::check(base64_decode(base64_decode($request->input('password'))), $user->password)) {
             return $this->failResponse(Response::HTTP_BAD_REQUEST, [trans('messages.login_not_found_data')]);
         }
 
@@ -77,6 +77,10 @@ class AuthController extends Controller
      */
     public function postLogout()
     {
+        $user = User::find(app('auth')->user()->id);
+        $user->access_token = '';
+        $user->save();
+
         return $this->succeedResponse();
     }
 
@@ -84,6 +88,7 @@ class AuthController extends Controller
      * Edit display name
      *
      * @param Request $request
+     * @internal param string new_name
      *
      * @return bool
      */
@@ -112,6 +117,7 @@ class AuthController extends Controller
      * Edit password
      *
      * @param Request $request
+     * @internal param string new_password
      *
      * @return bool
      */
@@ -119,11 +125,10 @@ class AuthController extends Controller
     {
         $errorMessages = [
             'new_password.required' => trans('validation.required', ['field' => trans('messages.password')]),
-            'new_password.max' => trans('validation.max.string', ['field' => trans('messages.password')]),
         ];
 
         $validator = Validator::make($request->all(), [
-            'new_password' => 'required|max:64',
+            'new_password' => 'required',
         ], $errorMessages);
 
         if ($validator->fails()) {
@@ -131,7 +136,7 @@ class AuthController extends Controller
         }
 
         $user = User::find(app('auth')->user()->id);
-        $user->password = Hash::make($request->input('new_password'));
+        $user->password = Hash::make(base64_decode(base64_decode($request->input('new_password'))));
         $user->save();
 
         return $this->succeedResponse($user);
@@ -139,14 +144,60 @@ class AuthController extends Controller
 
     /**
      * Get login lastest
+     *
+     * @return bool
      */
-    public function getLastest()
+    public function getLatest()
     {
-        $lastest = LoginHistory::where('uid', app('auth')->user()->id)
+        $currentUserId = app('auth')->user()->id;
+        $latest = LoginHistory::where('uid', $currentUserId)
             ->orderBy('datetime_access', 'desc')
             ->offset(1)
             ->limit(1)->first();
 
-        return $this->succeedResponse($lastest);
+        $user = User::find($currentUserId);
+        $latest->user = $user;
+
+        return $this->succeedResponse($latest);
+    }
+
+    /**
+     * Get list login history
+     *
+     * @param Request $request
+     * @internal param date from
+     * @internal param date to
+     * @internal param current_page
+     * @internal param per_page
+     *
+     * @return bool
+     */
+    public function getHistory(Request $request)
+    {
+        $errorMessages = [
+            'from.date_format' => trans('validation.date_format', ['field' => trans('messages.date_from')]),
+            'to.date_format' => trans('validation.date_format', ['field' => trans('messages.date_to')]),
+            'to.after_or_equal' => trans('validation.after_or_equal', ['from' => trans('messages.date_from'), 'to' => trans('messages.date_to')]),
+        ];
+
+        $validator = Validator::make($request->all(), [
+            'from' => 'date_format:Y-m-d|nullable',
+            'to' => 'date_format:Y-m-d|nullable|after_or_equal:from'
+        ], $errorMessages);
+
+        if ($validator->fails()) {
+            return $this->notValidateResponse($validator->errors());
+        }
+
+        $listLoginHistory = LoginHistory::select('*')
+            ->where('uid', app('auth')->user()->id)
+            ->orderBy('datetime_access', 'DESC');
+
+        if (!empty($request->input('from')) && !empty($request->input('to'))) {
+            $listLoginHistory->where('datetime_access', '>=', date_format(date_create($request->input('from')), 'Y-m-d'))
+                ->where('datetime_access', '<=', date_format(date_create($request->input('to')), 'Y-m-d 23:59:59'));
+        }
+
+        return $this->succeedPaginationResponse($listLoginHistory->paginate($this->getPaginationPerPage()));
     }
 }
