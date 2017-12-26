@@ -20,8 +20,8 @@ class AuthController extends Controller
      * Authenticate
      *
      * @param Request $request
-     * @internal param string $username
-     * @internal param string $password
+     * @internal param string username
+     * @internal param string password
      *
      * @return bool
      */
@@ -88,6 +88,7 @@ class AuthController extends Controller
      * Edit display name
      *
      * @param Request $request
+     * @internal param string new_name
      *
      * @return bool
      */
@@ -116,6 +117,7 @@ class AuthController extends Controller
      * Edit password
      *
      * @param Request $request
+     * @internal param string new_password
      *
      * @return bool
      */
@@ -163,6 +165,10 @@ class AuthController extends Controller
      * Get list login history
      *
      * @param Request $request
+     * @internal param date from
+     * @internal param date to
+     * @internal param current_page
+     * @internal param per_page
      *
      * @return bool
      */
