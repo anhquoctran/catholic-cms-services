@@ -77,6 +77,10 @@ class AuthController extends Controller
      */
     public function postLogout()
     {
+        $user = User::find(app('auth')->user()->id);
+        $user->access_token = '';
+        $user->save();
+
         return $this->succeedResponse();
     }
 
@@ -179,7 +183,9 @@ class AuthController extends Controller
             return $this->notValidateResponse($validator->errors());
         }
 
-        $listLoginHistory = LoginHistory::select('*')->orderBy('datetime_access', 'DESC');
+        $listLoginHistory = LoginHistory::select('*')
+            ->where('uid', app('auth')->user()->id)
+            ->orderBy('datetime_access', 'DESC');
 
         if (!empty($request->input('from')) && !empty($request->input('to'))) {
             $listLoginHistory->where('datetime_access', '>=', date_format(date_create($request->input('from')), 'Y-m-d'))
