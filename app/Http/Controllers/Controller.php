@@ -89,7 +89,7 @@ class Controller extends BaseController
      *
      * @return bool
      */
-    public function succeedResponse($data = [], $extra = null)
+    public function succeedResponse($data = null, $extra = null)
     {
         return $this->buildResponse(true, $data, $extra);
     }
