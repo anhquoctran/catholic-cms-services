@@ -11,6 +11,14 @@ if (!defined('DATE_TIME_FORMAT')) {
     define('DATE_TIME_FORMAT', 'Y-m-d H:i:s');
 }
 
+if (!defined('DATE_FORMAT')) {
+    define('DATE_FORMAT', 'Y-m-d');
+}
+
+if (!defined('DATE_TIME_END_FORMAT')) {
+    define('DATE_TIME_END_FORMAT', 'Y-m-d 23:59:59');
+}
+
 if(!defined('CHARGE_NEW')) {
     define('CHARGE_NEW', 0);
 }
