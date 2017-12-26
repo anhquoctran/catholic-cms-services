@@ -16,6 +16,6 @@ class DioceseController extends Controller
      * @return bool
      */
     public function listDiocese(){
-        return $this->succeedResponse(Diocese::where('is_deleted', '<>', 1)->get()->toArray());
+        return $this->succeedResponse(Diocese::where('is_deleted', '<>', 1)->get());
     }
 }
