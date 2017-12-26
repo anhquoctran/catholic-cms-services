@@ -32,13 +32,13 @@ if(!defined('SORT_NONE')) {
 }
 
 if (!defined('SEARCH_CONTRIBUTE_ALL')) {
-    define('SEARCH_ALL', 0);
+    define('SEARCH_CONTRIBUTE_ALL', 0);
 }
 
 if (!defined('SEARCH_CONTRIBUTE_NEW')) {
     define('SEARCH_CONTRIBUTE_NEW', 1);
 }
 
-if (!defined('SEARCH_CONTRIBUTE_NEW')) {
+if (!defined('SEARCH_CONTRIBUTE_UPDATE')) {
     define('SEARCH_CONTRIBUTE_UPDATE', 2);
 }
