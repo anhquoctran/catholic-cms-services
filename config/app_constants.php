@@ -4,7 +4,7 @@
  */
 
 if (!defined('DEFAULT_PAGINATION_PER_PAGE')) {
-    define('DEFAULT_PAGINATION_PER_PAGE', 100);
+    define('DEFAULT_PAGINATION_PER_PAGE', 50);
 }
 
 if (!defined('DATE_TIME_FORMAT')) {
