@@ -63,8 +63,12 @@ class Controller extends BaseController
      *
      * @return bool
      */
-    public function buildResponse($status, $result = null, $extraResponse = [])
+    public function buildResponse($status, $result = [], $extraResponse = [])
     {
+        if (!is_array($result)) {
+            $result = $result->toArray();
+        }
+
         $response = [
             'status' => Response::HTTP_OK,
             'message' => [$this->getMessage(Response::HTTP_OK)],
@@ -89,7 +93,7 @@ class Controller extends BaseController
      *
      * @return bool
      */
-    public function succeedResponse($data = [], $extra = null)
+    public function succeedResponse($data = null, $extra = null)
     {
         return $this->buildResponse(true, $data, $extra);
     }

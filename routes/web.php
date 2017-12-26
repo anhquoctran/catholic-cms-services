@@ -31,5 +31,10 @@ $app->group(['middleware' => 'auth'], function ($app) {
     $app->put('auth/password', 'AuthController@putPassword');
     $app->post('auth/latest', 'AuthController@getLatest');
     $app->post('auth/history', 'AuthController@getHistory');
+
+    /**
+     * Diocese Route
+     */
+    $app->post('diocese/fetch_all', 'DioceseController@listDiocese');
 });
 

@@ -42,3 +42,7 @@ if (!defined('SEARCH_CONTRIBUTE_NEW')) {
 if (!defined('SEARCH_CONTRIBUTE_UPDATE')) {
     define('SEARCH_CONTRIBUTE_UPDATE', 2);
 }
+
+if (!defined('IS_DELETED')) {
+    define('IS_DELETED', 1);
+}
