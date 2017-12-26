@@ -12,7 +12,7 @@
 */
 
 $app->get('/', function () use ($app) {
-    $array = ["message" => "Welcome to Sacred Heart Monastery REST Service!",  "success" => true, "code" => 200, "time" => date("F d, Y h:i:s")];
+    $array = ["message" => "Welcome to Sacred Heart Monastery REST Service!",  "success" => true, "code" => 200, "time" => \Carbon\Carbon::now()];
     return response()->json($array);
 });
 
