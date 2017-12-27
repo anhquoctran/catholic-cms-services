@@ -41,4 +41,8 @@ class District extends Model
      * @var array
      */
     protected $hidden = [''];
+
+    public function province() {
+        return $this->hasOne('App\Models\Province', 'id', 'province_id');
+    }
 }
