@@ -25,6 +25,4 @@ class MemberController extends Controller
 
         return $this->succeedPaginationResponse($listMembers);
     }
-
-
 }

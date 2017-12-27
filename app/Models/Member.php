@@ -36,12 +36,6 @@ class Member extends Model
      */
     protected $hidden = [''];
 
-    /**
-     * /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     public $fillable = [
         'uuid',
         'saint_name',
