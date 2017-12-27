@@ -21,7 +21,7 @@ class MemberController extends Controller
 
         $listMembers = Member::with('district')
             ->select(array_diff($allColumns, ['parish_id', 'district_id']))
-            ->paginate( DEFAULT_PAGINATION_PER_PAGE);
+            ->paginate(DEFAULT_PAGINATION_PER_PAGE);
 
         return $this->succeedPaginationResponse($listMembers);
     }
