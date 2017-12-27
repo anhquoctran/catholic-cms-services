@@ -21,7 +21,7 @@ $app->get('/', function () use ($app) {
  */
 $app->post('auth/login', 'AuthController@postLogin');
 
-$app->group(['middleware' => 'auth'], function ($app) {
+$app->group(['middleware' => 'auth'], function () use($app) {
 
     /**
      * Auth Route
