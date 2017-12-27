@@ -86,7 +86,7 @@ class ParishController extends Controller
         }
 
         $inputs = $request->all();
-        $parish = Parish::create($inputs);
+        Parish::create($inputs);
 
         return $this->succeedResponse(null);
     }
