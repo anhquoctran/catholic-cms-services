@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Diocese;
 
 /**
- * Class ExampleController
+ * Class DioceseController
  * @package App\Http\Controllers
  */
 class DioceseController extends Controller

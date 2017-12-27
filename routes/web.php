@@ -55,5 +55,16 @@ $app->group(['prefix' => 'v1'], function() use($app) {
             $app->get('get_by_province', 'DistrictController@getByProvince');
             $app->get('single', 'DistrictController@getSingleDistrict');
         });
+
+        /**
+         * Parish Route
+         */
+        $app->group(['prefix' => 'parish'], function() use($app) {
+            $app->post('fetch_all', 'ParishController@listParish');
+            $app->post('create', 'ParishController@createParish');
+            $app->put('update', 'ParishController@updateParish');
+            $app->delete('remove', 'ParishController@updateParish');
+            $app->delete('remove_all', 'ParishController@updateParish');
+        });
     });
 });

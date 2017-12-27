@@ -187,7 +187,7 @@ class Controller extends BaseController
 
         $result['pagination'] = $tmpResult;
 
-        $result[$dataKey] = $data;
+        $result[$dataKey] = empty($data) ? null : $data;
 
         if (!empty($extra) && is_array($extra)) {
             $result = array_merge($result, $extra);
