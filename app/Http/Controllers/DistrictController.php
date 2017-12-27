@@ -30,7 +30,7 @@ class DistrictController extends Controller
             return $this->notValidateResponse($validator->errors());
         }
 
-        $district = District::where('id', '=', $request->query('district_id'))->get();
+        $district = District::where('id', '=', $request->input('district_id'))->get();
 
         return $this->succeedResponse($district);
     }
@@ -47,7 +47,7 @@ class DistrictController extends Controller
             return $this->notValidateResponse($validator->errors());
         }
 
-        $listDistrictByProvince = District::where('province_id', '=', $request->query('province_id'))->get();
+        $listDistrictByProvince = District::where('province_id', '=', $request0->input('province_id'))->get();
 
         return $this->succeedResponse($listDistrictByProvince);
     }
