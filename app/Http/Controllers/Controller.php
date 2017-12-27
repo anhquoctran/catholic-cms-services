@@ -65,7 +65,7 @@ class Controller extends BaseController
      */
     public function buildResponse($status, $result = [], $extraResponse = [])
     {
-        if (!is_array($result)) {
+        if (!is_array($result) && !in_array($result ,['null',null])) {
             $result = $result->toArray();
         }
 
@@ -73,8 +73,11 @@ class Controller extends BaseController
             'status' => Response::HTTP_OK,
             'message' => [$this->getMessage(Response::HTTP_OK)],
             'success' => $status,
-            'data' => empty($result) ? null : $result
         ];
+
+        if (!in_array($result, ['null', null])) {
+            $response['data'] = empty($result) ? null : $result;
+        }
 
         if (is_array($extraResponse)) {
             $response = array_merge($response, $extraResponse);

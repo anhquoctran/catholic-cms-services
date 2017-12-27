@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Diocese;
 use App\Models\Parish;
 use Illuminate\Http\Request;
+use Validator;
 
 /**
  * Class ParishController
@@ -45,5 +47,47 @@ class ParishController extends Controller
 
             return $this->succeedPaginationResponse($parish->paginate($this->getPaginationPerPage()));
         }
+    }
+
+    /**
+     * Create parish
+     *
+     * @param Request $request
+     * @internal param name
+     * @internal param diocese_id
+     *
+     * @return bool
+     */
+    public function createParish(Request $request)
+    {
+        $errorMessages = [
+            'name.required' => trans('validation.required', ['field' => trans('messages.name')]),
+            'name.unique' => trans('validation.unique', ['field' => trans('messages.name')]),
+            'diocese_id.required' => trans('validation.required', ['field' => 'diocese_id']),
+        ];
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|unique:parishtbl,name',
+            'diocese_id' => 'required'
+        ], $errorMessages);
+
+        $diocese = Diocese::where([
+            ['id', $request->input('diocese_id')],
+            ['is_deleted', '<>', IS_DELETED],
+        ])->get();
+
+        $err = $validator->errors()->toArray();
+        if (empty($diocese->toArray()) && empty($err['diocese_id'])) {
+            $err['diocese_id'] = [trans('validation.exists_db', ['field' => 'diocese_id'])];
+        }
+
+        if (!empty($err)) {
+            return $this->notValidateResponse($err);
+        }
+
+        $inputs = $request->all();
+        $parish = Parish::create($inputs);
+
+        return $this->succeedResponse(null);
     }
 }
