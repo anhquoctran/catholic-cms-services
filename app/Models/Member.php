@@ -21,7 +21,7 @@ class Member extends Model
 
     protected $hidden = [''];
 
-    protected $fillable = [
+    public $fillable = [
         'uuid',
         'saint_name',
         'full_name',
@@ -44,9 +44,9 @@ class Member extends Model
         'is_inherited'
     ];
 
-    public function parish() {
-        return $this->hasOne('App\Models\Parish', 'id', 'parish_id');
-    }
+//    public function parish() {
+//        return $this->hasOne('App\Models\Parish', 'id', 'parish_id');
+//    }
 
     public function district() {
         return $this->hasOne('App\Models\District', 'id', 'district_id');

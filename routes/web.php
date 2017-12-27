@@ -55,5 +55,7 @@ $app->group(['prefix' => 'v1'], function() use($app) {
             $app->post('get_by_province', 'DistrictController@getByProvince');
             $app->post('single', 'DistrictController@getSingleDistrict');
         });
+
+        $app->get('test', 'MemberController@getAllMembers');
     });
 });
