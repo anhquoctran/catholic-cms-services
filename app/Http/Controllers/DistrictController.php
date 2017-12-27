@@ -47,7 +47,7 @@ class DistrictController extends Controller
             return $this->notValidateResponse($validator->errors());
         }
 
-        $listDistrictByProvince = District::where('province_id', '=', $request0->input('province_id'))->get();
+        $listDistrictByProvince = District::where('province_id', '=', $request->input('province_id'))->get();
 
         return $this->succeedResponse($listDistrictByProvince);
     }
