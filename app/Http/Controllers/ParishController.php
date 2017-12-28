@@ -90,4 +90,48 @@ class ParishController extends Controller
 
         return $this->succeedResponse(null);
     }
+
+    public function updateParish(Request $request)
+    {
+        $errorMessages = [
+            'name.required' => trans('validation.required', ['field' => trans('messages.name')]),
+            'name.unique' => trans('validation.unique', ['field' => trans('messages.name')]),
+            'diocese_id.required' => trans('validation.required', ['field' => 'diocese_id']),
+            'id.required' => trans('validation.required', ['field' => 'id']),
+        ];
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|unique:parishtbl,name,' . $request->input('id'),
+            'diocese_id' => 'required',
+            'id' => 'required'
+        ], $errorMessages);
+
+        $diocese = Diocese::where([
+            ['id', $request->input('diocese_id')],
+            ['is_deleted', '<>', IS_DELETED],
+        ])->get();
+
+        $parish = Parish::where([
+            ['id', $request->input('id')],
+            ['is_deleted', '<>', IS_DELETED],
+        ])->get();
+
+        $err = $validator->errors()->toArray();
+        if (empty($diocese->toArray()) && empty($err['diocese_id'])) {
+            $err['diocese_id'] = [trans('validation.exists_db', ['field' => 'diocese_id'])];
+        }
+
+        if (empty($parish->toArray()) && empty($err['id'])) {
+            $err['id'] = [trans('validation.exists_db', ['field' => 'id'])];
+        }
+
+        if (!empty($err)) {
+            return $this->notValidateResponse($err);
+        }
+
+        $inputs = $request->all();
+        Parish::where('id', $request->input('id'))->update($inputs);
+
+        return $this->succeedResponse(null);
+    }
 }
