@@ -97,9 +97,11 @@ class MemberController extends Controller
                 'm.is_dead',
                 'm.is_inherited'
             ]
-        )->leftJoin('','','','')
-            ->leftJoin('','','','')
-            ->where('','','')
+        )
+            ->leftJoin('parishtbl p','m.parish_id','=','p.id')
+            ->leftJoin('diocesetbl d','p.diocese_id','=','d.id')
+            ->leftJoin('districttbl d1', 'm.district_id', '=', 'd1.id')
+            ->where('m.isdeleted','<>',IS_DELETED)
             ->paginate($this->getPaginationPerPage());
 
         return $this->succeedResponse($listMember);
