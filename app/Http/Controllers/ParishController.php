@@ -172,4 +172,11 @@ class ParishController extends Controller
 
         return $this->succeedResponse(null);
     }
+
+    public function removeAllParish()
+    {
+        Parish::truncate();
+
+        return $this->succeedResponse(null);
+    }
 }
