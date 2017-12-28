@@ -44,16 +44,16 @@ $app->group(['prefix' => 'v1'], function() use($app) {
          * Province route
          */
         $app->group(['prefix' => 'provinces'], function() use($app) {
-            $app->get('fetch_all', 'ProvinceController@getListProvince');
+            $app->post('fetch_all', 'ProvinceController@getListProvince');
         });
 
         /**
          * District route
          */
         $app->group(['prefix' => 'districts'], function() use($app) {
-            $app->get('fetch_all', 'DistrictController@getListDistrict');
-            $app->get('get_by_province', 'DistrictController@getByProvince');
-            $app->get('single', 'DistrictController@getSingleDistrict');
+            $app->post('fetch_all', 'DistrictController@getListDistrict');
+            $app->post('get_by_province', 'DistrictController@getByProvince');
+            $app->post('single', 'DistrictController@getSingleDistrict');
         });
 
         /**
@@ -66,5 +66,7 @@ $app->group(['prefix' => 'v1'], function() use($app) {
             $app->delete('remove', 'ParishController@removeParish');
             $app->delete('remove_all', 'ParishController@removeAllParish');
         });
+
+        $app->get('test', 'MemberController@getAllMembers');
     });
 });

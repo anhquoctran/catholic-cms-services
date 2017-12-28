@@ -22,4 +22,8 @@ class Province extends Model
     public $timestamps = false;
 
     protected $fillable = ['name'];
+
+    public function districts() {
+        return $this->hasMany('App\Models\District', 'province_id', 'id');
+    }
 }
