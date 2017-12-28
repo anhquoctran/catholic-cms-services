@@ -144,4 +144,32 @@ class ParishController extends Controller
 
         return $this->succeedResponse(null);
     }
+
+    /**
+     * Remove parish
+     *
+     * @param Request $request
+     * @internal param list_parish_id
+     *
+     * @return bool
+     */
+    public function removeParish(Request $request)
+    {
+        $errorMessages = [
+            'list_parish_id.required' => trans('validation.required', ['field' => 'list_parish_id']),
+            'list_parish_id.array' => trans('validation.array', ['field' => 'list_parish_id']),
+        ];
+
+        $validator = Validator::make($request->all(), [
+            'list_parish_id' => 'required|array'
+        ], $errorMessages);
+
+        if ($validator->fails()) {
+            return $this->notValidateResponse($validator->errors());
+        }
+
+        Parish::destroy($request->input('list_parish_id'));
+
+        return $this->succeedResponse(null);
+    }
 }
