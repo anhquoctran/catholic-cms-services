@@ -5,18 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class Diocese
+ * Class Parish
  *
  * @package App\Models
  */
-class Diocese extends Model
+class Parish extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'diocesetbl';
+    protected $table = 'parishtbl';
 
     /**
      * The attributes that are mass assignable.
@@ -24,7 +24,7 @@ class Diocese extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'is_deleted'
+        'name', 'is_deleted', 'diocese_id'
     ];
 
     /**
