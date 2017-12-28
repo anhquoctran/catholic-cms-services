@@ -91,6 +91,16 @@ class ParishController extends Controller
         return $this->succeedResponse(null);
     }
 
+    /**
+     * Update parish
+     *
+     * @param Request $request
+     * @internal param id
+     * @internal param name
+     * @internal param diocese_id
+     *
+     * @return bool
+     */
     public function updateParish(Request $request)
     {
         $errorMessages = [
