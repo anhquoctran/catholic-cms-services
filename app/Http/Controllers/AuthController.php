@@ -38,7 +38,7 @@ class AuthController extends Controller
         ], $errorMessages);
 
         if ($validator->fails()) {
-            return $this->notValidateResponse($validator->errors());
+            return $this->invalidateResponse($validator->errors());
         }
 
         $user = User::where('username', $request->input('username'))->first();
@@ -103,7 +103,7 @@ class AuthController extends Controller
         ], $errorMessages);
 
         if ($validator->fails()) {
-            return $this->notValidateResponse($validator->errors());
+            return $this->invalidateResponse($validator->errors());
         }
 
         $user = User::find(app('auth')->user()->id);
@@ -132,7 +132,7 @@ class AuthController extends Controller
         ], $errorMessages);
 
         if ($validator->fails()) {
-            return $this->notValidateResponse($validator->errors());
+            return $this->invalidateResponse($validator->errors());
         }
 
         $user = User::find(app('auth')->user()->id);
@@ -186,7 +186,7 @@ class AuthController extends Controller
         ], $errorMessages);
 
         if ($validator->fails()) {
-            return $this->notValidateResponse($validator->errors());
+            return $this->invalidateResponse($validator->errors());
         }
 
         $listLoginHistory = LoginHistory::select('*')

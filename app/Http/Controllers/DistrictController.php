@@ -27,7 +27,7 @@ class DistrictController extends Controller
         ], $errorMessages);
 
         if($validator->fails()) {
-            return $this->notValidateResponse($validator->errors());
+            return $this->invalidateResponse($validator->errors());
         }
 
         $district = District::where('id', '=', $request->input('district_id'))->get();
@@ -44,7 +44,7 @@ class DistrictController extends Controller
         ], $errorMessages);
 
         if($validator->fails()) {
-            return $this->notValidateResponse($validator->errors());
+            return $this->invalidateResponse($validator->errors());
         }
 
         $listDistrictByProvince = District::where('province_id', '=', $request->input('province_id'))->get();
