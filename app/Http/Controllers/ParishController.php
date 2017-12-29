@@ -146,14 +146,14 @@ class ParishController extends Controller
     }
 
     /**
-     * Remove parish
+     * Delete parish
      *
      * @param Request $request
      * @internal param list_parish_id
      *
      * @return bool
      */
-    public function removeParish(Request $request)
+    public function deleteParish(Request $request)
     {
         $errorMessages = [
             'list_parish_id.required' => trans('validation.required', ['field' => 'list_parish_id']),
@@ -168,14 +168,7 @@ class ParishController extends Controller
             return $this->notValidateResponse($validator->errors());
         }
 
-        Parish::destroy($request->input('list_parish_id'));
-
-        return $this->succeedResponse(null);
-    }
-
-    public function removeAllParish()
-    {
-        Parish::truncate();
+        Parish::whereIn('id', $request->input('list_parish_id'))->update(['is_deleted' => IS_DELETED]);
 
         return $this->succeedResponse(null);
     }
