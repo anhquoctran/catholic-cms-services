@@ -181,8 +181,8 @@ class AuthController extends Controller
         ];
 
         $validator = Validator::make($request->all(), [
-            'from' => 'date_format:Y-m-d|nullable',
-            'to' => 'date_format:Y-m-d|nullable|after_or_equal:from'
+            'from' => 'date_format:' . DATE_FORMAT . '|nullable',
+            'to' => 'date_format:' . DATE_FORMAT . '|nullable|after_or_equal:from'
         ], $errorMessages);
 
         if ($validator->fails()) {
@@ -191,11 +191,11 @@ class AuthController extends Controller
 
         $listLoginHistory = LoginHistory::select('*')
             ->where('uid', app('auth')->user()->id)
-            ->orderBy('datetime_access', 'DESC');
+            ->orderBy('datetime_access', 'desc');
 
         if (!empty($request->input('from')) && !empty($request->input('to'))) {
-            $listLoginHistory->where('datetime_access', '>=', date_format(date_create($request->input('from')), 'Y-m-d'))
-                ->where('datetime_access', '<=', date_format(date_create($request->input('to')), 'Y-m-d 23:59:59'));
+            $listLoginHistory->where('datetime_access', '>=', date_format(date_create($request->input('from')), DATE_FORMAT))
+                ->where('datetime_access', '<=', date_format(date_create($request->input('to')), DATE_TIME_END_FORMAT));
         }
 
         return $this->succeedPaginationResponse($listLoginHistory->paginate($this->getPaginationPerPage()));
