@@ -56,9 +56,9 @@ $app->group(['prefix' => 'v1'], function() use($app) {
             $app->post('single', 'DistrictController@getSingleDistrict');
         });
 
-<<<<<<< HEAD
+
         $app->get('test', 'MemberController@getAllMembers');
-=======
+
         /**
          * Parish Route
          */
@@ -69,6 +69,5 @@ $app->group(['prefix' => 'v1'], function() use($app) {
             $app->delete('remove', 'ParishController@updateParish');
             $app->delete('remove_all', 'ParishController@updateParish');
         });
->>>>>>> feature/parish
     });
 });
