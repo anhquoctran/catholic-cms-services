@@ -11,6 +11,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property mixed $district
+ */
 class Province extends Model
 {
     protected $table = 'provincetbl';
@@ -23,7 +26,7 @@ class Province extends Model
 
     protected $fillable = ['name'];
 
-    public function districts() {
+    public function district() {
         return $this->hasMany('App\Models\District', 'province_id', 'id');
     }
 }

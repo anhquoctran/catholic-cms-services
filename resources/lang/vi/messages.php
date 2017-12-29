@@ -16,7 +16,4 @@ return [
 
     // Login
     'login_not_found_data' => 'Đăng nhập thất bại.',
-
-    // Auth
-
 ];
