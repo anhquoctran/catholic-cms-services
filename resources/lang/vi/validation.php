@@ -10,4 +10,5 @@ return [
     'after_or_equal' => ':from không được lớn hơn :to',
     'unique' => ':field không được trùng.',
     'exists_db' => ':field không tồn tại.',
+    'array' => ':field phải là một mảng',
 ];

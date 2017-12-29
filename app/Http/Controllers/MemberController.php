@@ -33,7 +33,7 @@ class MemberController extends Controller
         ], $errorMessages);
 
         if($validator->fails()) {
-            return $this->invalidateResponse($validator->errors());
+            return $this->notValidateResponse($validator->errors());
         }
 
         $user = Member::find($request->input('member_id'));
@@ -51,7 +51,7 @@ class MemberController extends Controller
         ], $errorMessages);
 
         if($validator->fails()) {
-            return $this->invalidateResponse($validator->errors());
+            return $this->notValidateResponse($validator->errors());
         }
 
         $listMembers = Member::where('parish_id', '=', $request->input('parish_id'))->paginate($this->getPaginationPerPage());
@@ -68,7 +68,7 @@ class MemberController extends Controller
         ], $errorMessages);
 
         if($validator->fails()) {
-            return $this->invalidateResponse($validator->errors());
+            return $this->notValidateResponse($validator->errors());
         }
 
         $listMember = Member::with(['parish.diocese' => function($query) use($request) {

@@ -11,11 +11,17 @@
 |
 */
 
+/**
+ * Login Route
+ */
+$app->post('auth/login', 'AuthController@postLogin');
+
 $app->group(['prefix' => 'v1'], function() use($app) {
     $app->get('/', function () use ($app) {
         $array = ["message" => "Welcome to Sacred Heart Monastery REST Service!",  "success" => true, "code" => 200, "time" => \Carbon\Carbon::now()];
         return response()->json($array);
     });
+
 
     /**
      * Login Route
@@ -56,7 +62,6 @@ $app->group(['prefix' => 'v1'], function() use($app) {
             $app->post('single', 'DistrictController@getSingleDistrict');
         });
 
-
         $app->get('test', 'MemberController@getAllMembers');
 
         /**
@@ -66,8 +71,8 @@ $app->group(['prefix' => 'v1'], function() use($app) {
             $app->post('fetch_all', 'ParishController@listParish');
             $app->post('create', 'ParishController@createParish');
             $app->put('update', 'ParishController@updateParish');
-            $app->delete('remove', 'ParishController@updateParish');
-            $app->delete('remove_all', 'ParishController@updateParish');
+            $app->delete('remove', 'ParishController@removeParish');
+            $app->delete('remove_all', 'ParishController@removeAllParish');
         });
     });
 });

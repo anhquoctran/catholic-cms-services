@@ -131,7 +131,7 @@ class Controller extends BaseController
      * @return bool
      *
      */
-    public function invalidateResponse($errors = [])
+    public function notValidateResponse($errors = [])
     {
         if (!is_array($errors)) {
             $errors = $errors->toArray();

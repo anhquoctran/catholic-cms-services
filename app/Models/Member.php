@@ -18,12 +18,27 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Member extends Model
 {
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
     protected $table = 'membertbl';
 
     protected $primaryKey = 'id';
 
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
     public $timestamps = false;
 
+    /**
+     * The attributes will hidden on json return.
+     *
+     * @var array
+     */
     protected $hidden = [''];
 
     public $fillable = [
