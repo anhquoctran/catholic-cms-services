@@ -90,6 +90,21 @@ class MemberController extends Controller
     }
 
     public function deleteMember(Request $request) {
+        $errorMessages = [
+            'list_member_id.required' => trans('validation.required', ['field' => 'list_member_id']),
+            'list_member_id.array' => trans('validation.array', ['field' => 'list_member_id']),
+        ];
 
+        $validator = Validator::make($request->all(), [
+            'list_member_id' => 'required|array'
+        ], $errorMessages);
+
+        if ($validator->fails()) {
+            return $this->notValidateResponse($validator->errors());
+        }
+
+        Member::whereIn('id', $request->input('list_member_id'))->update(['is_deleted' => IS_DELETED]);
+
+        return $this->succeedResponse(null);
     }
 }

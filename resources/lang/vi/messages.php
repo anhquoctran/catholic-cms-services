@@ -13,6 +13,8 @@ return [
     'member_id' => 'Mã thành viên',
     'parish_id' => 'Mã giáo xứ',
     'diocese_id' => 'Mã giáo phận',
+    'list_member_id' => 'Danh sách mã thành viên',
+    'list_parish_id' => 'Danh sách mã giáo xứ',
 
     // Login
     'login_not_found_data' => 'Đăng nhập thất bại.',
