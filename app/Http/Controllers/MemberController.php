@@ -89,6 +89,14 @@ class MemberController extends Controller
 
     }
 
+    /**
+     * Delete member
+     *
+     * @param Request $request
+     * @internal param list_member_id
+     *
+     * @return bool
+     */
     public function deleteMember(Request $request) {
         $errorMessages = [
             'list_member_id.required' => trans('validation.required', ['field' => 'list_member_id']),
