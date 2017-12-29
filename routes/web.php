@@ -63,8 +63,7 @@ $app->group(['prefix' => 'v1'], function() use($app) {
             $app->post('fetch_all', 'ParishController@listParish');
             $app->post('create', 'ParishController@createParish');
             $app->put('update', 'ParishController@updateParish');
-            $app->delete('remove', 'ParishController@removeParish');
-            $app->delete('remove_all', 'ParishController@removeAllParish');
+            $app->delete('delete', 'ParishController@deleteParish');
         });
 
         $app->get('test', 'MemberController@getAllMembers');
