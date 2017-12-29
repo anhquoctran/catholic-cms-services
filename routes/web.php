@@ -65,6 +65,13 @@ $app->group(['prefix' => 'v1'], function() use($app) {
         $app->get('test', 'MemberController@getAllMembers');
 
         /**
+         * Member route
+         */
+        $app->group(['prefix' => 'member'], function () use ($app) {
+            $app->delete('delete', 'MemberController@deleteMember');
+        });
+
+        /**
          * Parish Route
          */
         $app->group(['prefix' => 'parish'], function() use($app) {
