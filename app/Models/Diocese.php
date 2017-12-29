@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
  * Class Diocese
  *
  * @package App\Models
+ * @property mixed $parish
  */
 class Diocese extends Model
 {
@@ -40,4 +41,8 @@ class Diocese extends Model
      * @var bool
      */
     public $timestamps = false;
+
+    public function parish() {
+        return $this->hasMany('App\Models\Parish', 'diocese_id', 'id');
+    }
 }

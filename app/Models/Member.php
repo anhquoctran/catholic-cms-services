@@ -11,6 +11,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property mixed $parish
+ * @property mixed $district
+ * @property int $id
+ */
 class Member extends Model
 {
     protected $table = 'membertbl';
@@ -44,9 +49,9 @@ class Member extends Model
         'is_inherited'
     ];
 
-//    public function parish() {
-//        return $this->hasOne('App\Models\Parish', 'id', 'parish_id');
-//    }
+    public function parish() {
+        return $this->hasOne('App\Models\Parish', 'id', 'parish_id');
+    }
 
     public function district() {
         return $this->hasOne('App\Models\District', 'id', 'district_id');

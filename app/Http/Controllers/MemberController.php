@@ -17,11 +17,7 @@ class MemberController extends Controller
 {
     public function getAllMembers(Request $request) {
 
-        $member = new Member();
-        $allColumns = $member->fillable;
-
-        $listMembers = Member::with('district')
-            ->select(array_diff($allColumns, ['parish_id', 'district_id']))
+        $listMembers = Member::with('parish.diocese', 'district.province')
             ->paginate($this->getPaginationPerPage());
 
         return $this->succeedPaginationResponse($listMembers);
@@ -75,33 +71,11 @@ class MemberController extends Controller
             return $this->invalidateResponse($validator->errors());
         }
 
-        $listMember = DB::table('membertbl m')->select(
-            [
-                'm.id',
-                'm.uuid',
-                'm.saint_name',
-                'm.full_name',
-                'm.gender',
-                'm.birth_year',
-                'm.district_id',
-                'm.saint_name_of_relativer',
-                'm.full_name_of_relativer',
-                'm.gender_of_relativer',
-                'm.birth_year_of_relativer',
-                'm.balance',
-                'm.phone_number',
-                'm.date_join',
-                'm.parish_id',
-                'm.image_url',
-                'm.description',
-                'm.is_dead',
-                'm.is_inherited'
-            ]
-        )
-            ->leftJoin('parishtbl p','m.parish_id','=','p.id')
-            ->leftJoin('diocesetbl d','p.diocese_id','=','d.id')
-            ->leftJoin('districttbl d1', 'm.district_id', '=', 'd1.id')
-            ->where('m.isdeleted','<>',IS_DELETED)
+        $listMember = Member::with(['parish.diocese' => function($query) use($request) {
+            $query->where('diocese.id', '=', $request->input('diocese_id'));
+        }])
+            ->with('district.province')
+            ->where('isdeleted','<>',IS_DELETED)
             ->paginate($this->getPaginationPerPage());
 
         return $this->succeedResponse($listMember);
@@ -112,6 +86,10 @@ class MemberController extends Controller
     }
 
     public function getMemberByProvince(Request $request) {
+
+    }
+
+    public function deleteMember(Request $request) {
 
     }
 }

@@ -11,6 +11,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property mixed $province
+ * @property mixed $member
+ */
 class District extends Model
 {
     /**
@@ -44,5 +48,9 @@ class District extends Model
 
     public function province() {
         return $this->hasOne('App\Models\Province', 'id', 'province_id');
+    }
+
+    public function member() {
+        return $this->hasMany('App\Models\Member', 'district_id', 'id');
     }
 }
