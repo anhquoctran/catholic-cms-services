@@ -82,5 +82,21 @@ $app->group(['prefix' => 'v1'], function() use($app) {
             $app->delete('remove', 'ParishController@removeParish');
             $app->delete('remove_all', 'ParishController@removeAllParish');
         });
+
+        $app->group(['prefix' => 'statistic'], function() use($app) {
+            $app->post('overview', 'StatisticController@overview');
+
+            $app->group(['prefix' => 'members'], function() use($app) {
+                $app->post('get_by_parish', 'MemberController@getMemberByParish');
+                $app->post('get_by_district', 'MemberController@getMemberByDistrict');
+                $app->post('get_by_gender', 'MemberController@getMemberByParish');
+                $app->post('get_by_diocese', 'MemberController@getMemberByDiocese');
+                $app->post('get_by_province', 'MemberController@getMemberByProvince');
+            });
+
+            $app->group(['prefix' => 'contribute'], function() use($app) {
+
+            });
+        });
     });
 });
