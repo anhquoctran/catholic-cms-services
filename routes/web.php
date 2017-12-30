@@ -62,13 +62,14 @@ $app->group(['prefix' => 'v1'], function() use($app) {
             $app->post('single', 'DistrictController@getSingleDistrict');
         });
 
-        $app->get('test', 'MemberController@getAllMembers');
-
         /**
          * Member route
          */
-        $app->group(['prefix' => 'member'], function () use ($app) {
+        $app->group(['prefix' => 'members'], function () use ($app) {
             $app->delete('delete', 'MemberController@deleteMember');
+            $app->post('fetch_all', 'MemberController@getAllMembers');
+            $app->get('count', 'MemberController@getTotalMembersAvailable');
+            $app->get('search', 'MemberController@search');
         });
 
         /**

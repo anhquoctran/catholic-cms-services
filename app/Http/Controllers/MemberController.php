@@ -15,9 +15,10 @@ use Validator;
 
 class MemberController extends Controller
 {
-    public function getAllMembers(Request $request) {
+    public function getAllMembers() {
 
         $listMembers = Member::with('parish.diocese', 'district.province')
+            ->where('is_deleted', '<>', IS_DELETED)
             ->paginate($this->getPaginationPerPage());
 
         return $this->succeedPaginationResponse($listMembers);
@@ -36,7 +37,7 @@ class MemberController extends Controller
             return $this->notValidateResponse($validator->errors());
         }
 
-        $user = Member::find($request->input('member_id'));
+        $user = Member::whereIn('id', $request->input('member_id'))->first();
 
         return $this->succeedResponse($user);
     }
@@ -75,17 +76,98 @@ class MemberController extends Controller
             $query->where('diocese.id', '=', $request->input('diocese_id'));
         }])
             ->with('district.province')
-            ->where('isdeleted','<>',IS_DELETED)
+            ->where('is_deleted','<>',IS_DELETED)
             ->paginate($this->getPaginationPerPage());
 
         return $this->succeedResponse($listMember);
     }
 
     public function getMemberByDistrict(Request $request) {
+        $errorMessages = [
+            'district_id.required' => trans('validation.required', ['field' => trans('messages.district_id')])
+        ];
+        $validator = Validator::make($request->all(), [
+            'district_id' => 'required|numeric',
+        ], $errorMessages);
 
+        if($validator->fails()) {
+            return $this->notValidateResponse($validator->errors());
+        }
+
+         $listMembers = Member::with('parish.dicoese')
+             ->with(['district.province' => function($query) use ($request){
+                 $query->where('district.id', '=', $request->input('district_id'));
+             }])
+             ->where('is_deleted','<>', IS_DELETED)
+             ->paginate($this->getPaginationPerPage());
+
+        return $this->succeedResponse($listMembers);
     }
 
     public function getMemberByProvince(Request $request) {
+        $errorMessages = [
+            'province_id.required' => trans('validation.required', ['field' => trans('messages.province_id')])
+        ];
+        $validator = Validator::make($request->all(), [
+            'province_id' => 'required|numeric',
+        ], $errorMessages);
+
+        if($validator->fails()) {
+            return $this->notValidateResponse($validator->errors());
+        }
+
+        $listMembers = Member::with('parish.dicoese')
+            ->with(['district.province' => function($query) use ($request){
+                $query->where('district.province_id', '=', $request->input('district_id'));
+            }])
+            ->where('is_deleted','<>', IS_DELETED)
+            ->paginate($this->getPaginationPerPage());
+
+        return $this->succeedResponse($listMembers);
+    }
+
+    public function getTotalMembersAvailable() {
+        $count = Member::select('count(id) as total')
+            ->where("is_deleted", '<>', IS_DELETED)
+            ->get();
+
+        return $this->succeedResponse($count);
+    }
+
+    public function getMemberHasContribute() {
+        $members = Member::with(['district', 'parish'])
+            ->where('is_deleted', '<>', IS_DELETED)
+            ->where('balance', '>', 0)
+            ->get();
+
+        return $this->succeedResponse($members);
+    }
+
+    public function search(Request $request) {
+        $errorMessages = [
+            'query.required' => trans('validation.required', ['field' => trans('messages.query')])
+        ];
+        $validator = Validator::make($request->all(), [
+            'query' => 'required|numeric',
+        ], $errorMessages);
+
+        if($validator->fails()) {
+            return $this->notValidateResponse($validator->errors());
+        }
+
+        $result = Member::with(['district.province', 'parish.diocese'])
+            ->where('is_deleted', '<>', IS_DELETED)
+            ->where('full_name_en', 'like', "'%".$request->input('query')."%'")
+            ->paginate($this->getPaginationPerPage());
+
+        return $this->succeedResponse($result);
+    }
+
+    public function addMember(Request $request) {
+
+    }
+
+    public function updateMember(Request $request) {
 
     }
 
