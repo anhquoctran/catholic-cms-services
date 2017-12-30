@@ -10,11 +10,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Member;
-use Illuminate\Support\Facades\DB;
 use Validator;
 
 class MemberController extends Controller
 {
+    /**
+     * Get all members without conditions excepts deleted members
+     * @return bool
+     */
     public function getAllMembers() {
 
         $listMembers = Member::with('parish.diocese', 'district.province')
@@ -24,7 +27,11 @@ class MemberController extends Controller
         return $this->succeedPaginationResponse($listMembers);
     }
 
-
+    /**
+     * Gets one member by member ID, excepts deleted member
+     * @param Request $request
+     * @return bool
+     */
     public function getSingleMember(Request $request) {
         $errorMessages = [
             'member_id.required' => trans('validation.required', ['field' => trans('messages.member_id')])
@@ -42,6 +49,11 @@ class MemberController extends Controller
         return $this->succeedResponse($user);
     }
 
+    /**
+     * Gets list of members by parish, specificed by parish_id, excepts deleted members
+     * @param Request $request
+     * @return mixed
+     */
     public function getMemberByParish(Request $request) {
 
         $errorMessages = [
@@ -60,6 +72,11 @@ class MemberController extends Controller
         return $this->succeedResponse($listMembers);
     }
 
+    /**
+     * Gets list of members by diocese, specificed by diocese_id, excepts deleted members
+     * @param Request $request
+     * @return mixed
+     */
     public function getMemberByDiocese(Request $request) {
         $errorMessages = [
             'diocese_id.required' => trans('validation.required', ['field' => trans('messages.diocese_id')])
@@ -82,6 +99,11 @@ class MemberController extends Controller
         return $this->succeedResponse($listMember);
     }
 
+    /**
+     * Gets list of members by district, specificed by district_id, excepts deleted members
+     * @param Request $request
+     * @return mixed
+     */
     public function getMemberByDistrict(Request $request) {
         $errorMessages = [
             'district_id.required' => trans('validation.required', ['field' => trans('messages.district_id')])
@@ -104,6 +126,11 @@ class MemberController extends Controller
         return $this->succeedResponse($listMembers);
     }
 
+    /**
+     * Gets list of members by province, specificed by province_id, excepts deleted members
+     * @param Request $request
+     * @return mixed
+     */
     public function getMemberByProvince(Request $request) {
         $errorMessages = [
             'province_id.required' => trans('validation.required', ['field' => trans('messages.province_id')])
@@ -126,12 +153,40 @@ class MemberController extends Controller
         return $this->succeedResponse($listMembers);
     }
 
-    public function getTotalMembersAvailable() {
-        $count = Member::select('count(id) as total')
-            ->where("is_deleted", '<>', IS_DELETED)
-            ->get();
+    /**
+     * Gets list of members by gender, excepts deleted members
+     * @param Request $request
+     * @return mixed
+     */
+    public function getMemberByGender(Request $request) {
+        $errorMessages = [
+            'gender.required' => trans('validation.required', ['field' => trans('messages.gender')])
+        ];
+        $validator = Validator::make($request->all(), [
+            'gender' => 'required|numeric',
+        ], $errorMessages);
 
-        return $this->succeedResponse($count);
+        if($validator->fails()) {
+            return $this->notValidateResponse($validator->errors());
+        }
+
+        $listMembers = Member::with(['parish.diocese', 'district.province'])
+            ->where('is_deleted', '<>', IS_DELETED)
+            ->where('gender', '=', $request->input('gender'))
+            ->paginate($this->getPaginationPerPage());
+
+        return $this->succeedResponse($listMembers);
+    }
+
+    /**
+     * Returns total of available members (without deleted members)
+     */
+    public function getTotalMembersAvailable() {
+        $count = Member::selectRaw('count(id) as total')
+            ->where("is_deleted", '<>', IS_DELETED)
+            ->first();
+
+        return $this->succeedResponse(['total_members' => $count['total']]);
     }
 
     public function getMemberHasContribute() {
@@ -163,10 +218,20 @@ class MemberController extends Controller
         return $this->succeedResponse($result);
     }
 
+    public function contribute(Request $request) {
+        
+    }
+
+    /**
+     * @param Request $request
+     */
     public function addMember(Request $request) {
 
     }
 
+    /**
+     * @param Request $request
+     */
     public function updateMember(Request $request) {
 
     }
