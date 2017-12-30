@@ -11,11 +11,17 @@
 |
 */
 
+/**
+ * Login Route
+ */
+$app->post('auth/login', 'AuthController@postLogin');
+
 $app->group(['prefix' => 'v1'], function() use($app) {
     $app->get('/', function () use ($app) {
         $array = ["message" => "Welcome to Sacred Heart Monastery REST Service!",  "success" => true, "code" => 200, "time" => \Carbon\Carbon::now()];
         return response()->json($array);
     });
+
 
     /**
      * Login Route
