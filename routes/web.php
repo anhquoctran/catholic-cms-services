@@ -42,7 +42,7 @@ $app->group(['prefix' => 'v1'], function() use($app) {
         /**
          * Diocese Route
          */
-        $app->post('diocese/fetch_all', 'DioceseController@listDiocese');
+        $app->post('dioceses/fetch_all', 'DioceseController@listDiocese');
 
         /**
          * Province route
@@ -74,7 +74,7 @@ $app->group(['prefix' => 'v1'], function() use($app) {
         /**
          * Parish Route
          */
-        $app->group(['prefix' => 'parish'], function() use($app) {
+        $app->group(['prefix' => 'parishs'], function() use($app) {
             $app->post('fetch_all', 'ParishController@listParish');
             $app->post('create', 'ParishController@createParish');
             $app->put('update', 'ParishController@updateParish');
