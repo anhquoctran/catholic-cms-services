@@ -80,6 +80,7 @@ $app->group(['prefix' => 'v1'], function() use($app) {
             $app->put('update', 'ParishController@updateParish');
             $app->delete('remove', 'ParishController@removeParish');
             $app->delete('remove_all', 'ParishController@removeAllParish');
+            $app->get('get_all', 'ParishController@getAll');
         });
 
         /**
