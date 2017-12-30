@@ -15,7 +15,7 @@ use Validator;
 
 class MemberController extends Controller
 {
-    public function getAllMembers(Request $request) {
+    public function getAllMembers() {
 
         $listMembers = Member::with('parish.diocese', 'district.province')
             ->where('is_deleted', '<>', IS_DELETED)
@@ -124,6 +124,51 @@ class MemberController extends Controller
             ->paginate($this->getPaginationPerPage());
 
         return $this->succeedResponse($listMembers);
+    }
+
+    public function getTotalMembersAvailable() {
+        $count = Member::select('count(id) as total')
+            ->where("is_deleted", '<>', IS_DELETED)
+            ->get();
+
+        return $this->succeedResponse($count);
+    }
+
+    public function getMemberHasContribute() {
+        $members = Member::with(['district', 'parish'])
+            ->where('is_deleted', '<>', IS_DELETED)
+            ->where('balance', '>', 0)
+            ->get();
+
+        return $this->succeedResponse($members);
+    }
+
+    public function search(Request $request) {
+        $errorMessages = [
+            'query.required' => trans('validation.required', ['field' => trans('messages.query')])
+        ];
+        $validator = Validator::make($request->all(), [
+            'query' => 'required|numeric',
+        ], $errorMessages);
+
+        if($validator->fails()) {
+            return $this->notValidateResponse($validator->errors());
+        }
+
+        $result = Member::with(['district.province', 'parish.diocese'])
+            ->where('is_deleted', '<>', IS_DELETED)
+            ->where('full_name_en', 'like', "'%".$request->input('query')."%'")
+            ->paginate($this->getPaginationPerPage());
+
+        return $this->succeedResponse($result);
+    }
+
+    public function addMember(Request $request) {
+
+    }
+
+    public function updateMember(Request $request) {
+
     }
 
     /**
