@@ -13,6 +13,10 @@ use App\Models\Member;
 use App\Models\ContributeHistory;
 use Validator;
 
+/**
+ *
+ * @mixin \Illuminate\Database\Eloquent\Builder
+ */
 class MemberController extends Controller
 {
     /**
