@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\LoginHistory;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
+use function sha1;
 use Validator;
 use Carbon\Carbon;
 
@@ -54,7 +55,7 @@ class AuthController extends Controller
         /**
          * If user login success then set access_token
          */
-        $user->access_token = str_random(64) . md5($user->id);
+        $user->access_token = str_random(64) . sha1($user->id);
         $user->save();
 
         $loginHistoryData = [

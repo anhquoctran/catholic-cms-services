@@ -31,6 +31,8 @@ return [
     'birth_year_relativer' => 'Năm sinh người quan hệ',
     'description' => 'Ghi chú/Mô tả',
     'balance' => 'Số tiền',
+    'datetime_charge' => 'Thời gian nạp',
+    'type_charge' => 'Hình thức nạp',
 
     // Login
     'login_not_found_data' => 'Đăng nhập thất bại.',

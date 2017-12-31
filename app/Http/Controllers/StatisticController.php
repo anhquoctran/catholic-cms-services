@@ -47,7 +47,7 @@ class StatisticController extends Controller
         $response = [
             'total_of_members' => $totalOfMembersAvailable,
             'total_of_dioceses' => $totalOfDioceses,
-            'total_of_parish' => $totalOfParishs,
+            'total_of_parishs' => $totalOfParishs,
             'total_of_balance' => (int) $totalOfBalance->total,
             'total_of_member_has_contributed' => $totalOfMemberHasContributed,
             'member_has_largest_balance' => $memberHasLargestBalance

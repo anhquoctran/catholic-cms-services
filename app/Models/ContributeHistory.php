@@ -10,6 +10,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property mixed $member
+ */
 class ContributeHistory extends Model
 {
     protected $table = 'contributehistorytbl';

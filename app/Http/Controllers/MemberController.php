@@ -10,6 +10,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Member;
+use App\Models\ContributeHistory;
 use Validator;
 
 class MemberController extends Controller
@@ -18,13 +19,21 @@ class MemberController extends Controller
      * Get all members without conditions excepts deleted members
      * @return bool
      */
-    public function getAllMembers() {
+    public function getMembersWithPagination() {
 
         $listMembers = Member::with('parish.diocese', 'district.province')
             ->where('is_deleted', '<>', IS_DELETED)
             ->paginate($this->getPaginationPerPage());
 
         return $this->succeedPaginationResponse($listMembers);
+    }
+
+    public function getAllMembers() {
+        $listMembers = Member::with(['parish.diocese', 'district.province'])
+            ->where('is_deleted', '<>', IS_DELETED)
+            ->get();
+
+        return $this->succeedResponse($listMembers);
     }
 
     /**
@@ -90,7 +99,7 @@ class MemberController extends Controller
         }
 
         $listMember = Member::with(['parish.diocese' => function($query) use($request) {
-            $query->where('diocese.id', '=', $request->input('diocese_id'));
+            $query->where('diocestbl.id', '=', $request->input('diocese_id'));
         }])
             ->with('district.province')
             ->where('is_deleted','<>',IS_DELETED)
@@ -219,7 +228,58 @@ class MemberController extends Controller
     }
 
     public function contribute(Request $request) {
-        
+        $errorMessages = [
+            'balance.required' => trans('validation.required', ['field' => trans('messages.balance')]),
+            'member_id.required' => trans('validation.required', ['field' => trans('messages.member_id')]),
+            'datetime_charge.date_format' => trans('validation.date_format', ['field', trans('messages.datetime_charge')]),
+            'datetime_charge.required' => trans('validation.required', ['field', trans('messages.datetime_charge')]),
+            'type_charge.required' => trans('validation.required', ['field', trans('messages')]),
+        ];
+        $validator = Validator::make($request->all(), [
+            'balance' => 'required|numeric',
+            'member_id' => 'required|numeric',
+            'datetime_charge', 'required|date_format:Y-m-d H:i:s',
+            'type_charge', 'required|numberic|between0,1'
+        ], $errorMessages);
+
+        if($validator->fails()) {
+            return $this->notValidateResponse($validator->errors());
+        }
+        $member_id = $request->input('member_id');
+        $member = Member::find($member_id);
+
+        if(!is_null($member)) {
+            $typeCharge = $request->input('type_charge');
+            $balance = $request->input('balance');
+            $currentUserId = app('auth')->user()->id;
+            $datetime_charge = $request->input('datetime_charge');
+
+            switch($typeCharge) {
+                case 0:
+                    $member->balance = (int)$balance;
+                    break;
+                case 1:
+                    $member->balance += (int)$balance;
+                    break;
+            }
+
+            $saved = $member->save();
+
+            if($saved) {
+                $history = new ContributeHistory();
+                $history->balance = $member->balance;
+                $history->id_secretary = $currentUserId;
+                $history->member_id = $member_id;
+                $history->datetime_charge = $datetime_charge;
+                $history->token = $request->header('Authorization');
+                $history->save();
+                return $this->succeedResponse(null);
+            }
+            else {
+                return $this->notValidateResponse(['Cập nhật số tiền không thành công']);
+            }
+        }
+        else return $this->notValidateResponse(['Không tìm thấy hội viên này trên hệ thống!']);
     }
 
     /**

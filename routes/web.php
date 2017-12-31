@@ -65,11 +65,17 @@ $app->group(['prefix' => 'v1'], function() use($app) {
          */
         $app->group(['prefix' => 'members'], function () use ($app) {
             $app->delete('delete', 'MemberController@deleteMember');
-            $app->post('fetch_all', 'MemberController@getAllMembers');
+            $app->post('fetch_all', 'MemberController@getMembersWithPagination');
             $app->post('search', 'MemberController@search');
 
             $app->get('count', 'MemberController@getTotalMembersAvailable');
+            $app->get('get_all', 'MemberController@getAllMembers');
         });
+
+        /**
+         * Contribute route
+         */
+        $app->post('contribute/charge', 'MemberController@contribute');
 
         /**
          * Parish Route
