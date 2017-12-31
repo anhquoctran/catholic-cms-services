@@ -21,6 +21,9 @@ $app->group(['prefix' => 'v1'], function() use($app) {
         return response()->json($array);
     });
 
+    $app->get('test', function() {
+        return hash('haval256,5', 'data');
+    });
     /**
      * Login Route
      */
@@ -67,8 +70,10 @@ $app->group(['prefix' => 'v1'], function() use($app) {
             $app->delete('delete', 'MemberController@deleteMember');
             $app->post('fetch_all', 'MemberController@getMembersWithPagination');
             $app->post('search', 'MemberController@search');
+            $app->post('create', 'MemberController@addMember');
+            $app->put('update', 'MemberController@updateMember');
 
-            $app->get('count', 'MemberController@getTotalMembersAvailable');
+            $app->post('count', 'MemberController@getTotalMembersAvailable');
             $app->get('get_all', 'MemberController@getAllMembers');
         });
 

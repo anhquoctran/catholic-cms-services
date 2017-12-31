@@ -55,7 +55,7 @@ class AuthController extends Controller
         /**
          * If user login success then set access_token
          */
-        $user->access_token = str_random(64) . sha1($user->id);
+        $user->access_token = str_random(64) . \hash('sha512',$user->id);
         $user->save();
 
         $loginHistoryData = [

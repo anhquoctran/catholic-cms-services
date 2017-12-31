@@ -27,12 +27,12 @@ if(!defined('CHARGE_UPDATE')) {
     define('CHARGE_UPDATE', 1);
 }
 
-if(!defined('SORT_ASC')) {
-    define('SORT_ASC', 0);
+if(!defined('ASC')) {
+    define('ASC', 0);
 }
 
-if(!defined('SORT_DESC')) {
-    define('SORT_DESC', 1);
+if(!defined('DESC')) {
+    define('DESC', 1);
 }
 
 if(!defined('SORT_NONE')) {

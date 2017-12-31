@@ -33,6 +33,13 @@ return [
     'balance' => 'Số tiền',
     'datetime_charge' => 'Thời gian nạp',
     'type_charge' => 'Hình thức nạp',
+    'is_dead' => 'Đã chết',
+    'is_inherited' => 'Thừa kế',
+    'from' => 'Thời gian bắt đầu',
+    'to' => 'Thời gian kết thúc',
+    'sort'=>'Sắp xếp',
+    'year' => 'Năm',
+    'month' => 'Tháng',
 
     // Login
     'login_not_found_data' => 'Đăng nhập thất bại.',

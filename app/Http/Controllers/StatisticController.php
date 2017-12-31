@@ -8,11 +8,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ContributeHistory;
+use App\Models\LoginHistory;
 use App\Models\Member;
 use App\Models\Parish;
 use App\Models\Diocese;
+use const ASC;
+use const DATE_TIME_FORMAT;
+use const DESC;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use const SORT_ASC;
+use const SORT_DESC;
+use const SORT_NONE;
+use function trans;
+use Illuminate\Support\Facades\Validator;
 
 class StatisticController extends Controller
 {
@@ -57,14 +67,105 @@ class StatisticController extends Controller
     }
 
     public function getByTimeRange(Request $request) {
+        $errorMessages = [
+            'from.required' => trans('validation.required', ['field' => trans('messages.from')]),
+            'to.required' => trans('validation.required', ['field' => trans('messages.to')]),
+            'sort.required' => trans('validation.required', ['field' => trans('messages.sort')])
+        ];
+        $validator = Validator::make($request->all(), [
+            'from' => 'required|date_format:'.DATE_TIME_FORMAT,
+            'to' => 'required|date_format:'.DATE_TIME_FORMAT,
+            'sort' => 'required|numeric'
+        ], $errorMessages);
 
+        if($validator->fails()) {
+            return $this->notValidateResponse($validator->errors());
+        }
+
+        $from = $request->input('from');
+        $to = $request->input('to');
+        $sort = $request->input('sort');
+
+        $histories = ContributeHistory::with('member')
+            ->whereBetween('datetime_charge', [$from, $to]);
+
+        switch ($sort) {
+            case ASC :
+                $histories = $histories->orderBy('balance');
+                break;
+            case DESC:
+                $histories = $histories->orderByDesc('balance');
+                break;
+        }
+
+        return $this->succeedResponse($histories->get());
     }
 
     public function getByYear(Request $request) {
+        $errorMessages = [
+            'year.required' => trans('validation.required', ['field' => trans('messages.from')]),
+            'sort.required' => trans('validation.required', ['field' => trans('messages.sort')])
+        ];
+        $validator = Validator::make($request->all(), [
+            'year' => 'required|numeric',
+            'sort' => 'required|numeric'
+        ], $errorMessages);
 
+        if($validator->fails()) {
+            return $this->notValidateResponse($validator->errors());
+        }
+
+        $year = $request->input('year');
+        $sort = $request->input('sort');
+
+        $histories = ContributeHistory::with('member')
+            ->whereYear('datetime_charge', '=', $year);
+
+        switch ($sort) {
+            case ASC :
+                $histories = $histories->orderBy('balance');
+                break;
+            case DESC:
+                $histories = $histories->orderByDesc('balance');
+                break;
+        }
+
+        return $this->succeedResponse($histories->get());
     }
 
     public function getByMonthYear(Request $request) {
+        $errorMessages = [
+            'year.required' => trans('validation.required', ['field' => trans('messages.from')]),
+            'month.required' => trans('validation.required', ['field' => trans('messages.month')]),
+            'sort.required' => trans('validation.required', ['field' => trans('messages.sort')])
+        ];
+        $validator = Validator::make($request->all(), [
+            'year' => 'required|numeric',
+            'month' => 'required|numeric',
+            'sort' => 'required|numeric'
+        ], $errorMessages);
 
+        if($validator->fails()) {
+            return $this->notValidateResponse($validator->errors());
+        }
+
+        $year = $request->input('year');
+        $month = $request->input('month');
+        $sort = $request->input('sort');
+
+        $histories = ContributeHistory::with('member')
+            ->whereYear('datetime_charge', '=', $year)
+            ->whereMonth('datetime_charge', '=', $month);
+
+        switch ($sort) {
+            case ASC :
+                $histories = $histories->orderBy('balance');
+                break;
+            case DESC:
+                $histories = $histories->orderByDesc('balance');
+                break;
+        }
+
+        return $this->succeedResponse($histories->get());
     }
 }

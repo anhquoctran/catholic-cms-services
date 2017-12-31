@@ -11,7 +11,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Member;
 use App\Models\ContributeHistory;
-use Validator;
+use function trans;
+use Illuminate\Support\Facades\Validator;
 
 /**
  *
@@ -215,7 +216,7 @@ class MemberController extends Controller
             'query.required' => trans('validation.required', ['field' => trans('messages.query')])
         ];
         $validator = Validator::make($request->all(), [
-            'query' => 'required|numeric',
+            'query' => 'required|string',
         ], $errorMessages);
 
         if($validator->fails()) {
@@ -224,10 +225,10 @@ class MemberController extends Controller
 
         $result = Member::with(['district.province', 'parish.diocese'])
             ->where('is_deleted', '<>', IS_DELETED)
-            ->where('full_name_en', 'like', "'%".$request->input('query')."%'")
+            ->where('full_name_en', 'like', '%' . $request->input('query') . '%')
             ->paginate($this->getPaginationPerPage());
 
-        return $this->succeedResponse($result);
+        return $this->succeedPaginationResponse($result);
     }
 
     public function contribute(Request $request) {
@@ -299,27 +300,138 @@ class MemberController extends Controller
             'gender.required' => trans('validation.required', ['field', trans('messages.gender')]),
             'saint_name_of_relativer.required' => trans('validation.required', ['field', trans('messages.saint_name_relativer')]),
             'full_name_of_reliver.required' =>trans('validation.required', ['field', trans('messages.full_name_relativer')]),
-
+            'birth_year_of_relativer.required' => trans('validation.required', ['field', trans('messages.birth_year_relativer')]),
+            'gender_of_relativer.required' => trans('validation.required', ['field', trans('messages.gender_relativer')]),
+            'parish_id.required' =>trans('validation.required', ['field', trans('messages.parish_id')]),
+            'phone_number.required' => trans('validation.required', ['field', trans('messages.phone')]),
+            'date_join.requried' => trans('validation.required', ['field', trans('messages.date_join')]),
+            'image_url' => trans('validation.required', ['field', trans('messages.image_url')]),
+            'district_id' => trans('validation.required', ['field', trans('messages.district_id')])
         ];
         $validator = Validator::make($request->all(), [
-            'balance' => 'required|numeric',
-            'member_id' => 'required|numeric',
-            'datetime_charge', 'required|date_format:Y-m-d H:i:s',
-            'type_charge', 'required|numberic|between0,1'
+            'uuid' => 'required|string',
+            'full_name' => 'required|string',
+            'full_name_en' => 'required|string',
+            'saint_name' => 'required|string',
+            'gender' => 'required|numeric',
+            'birth_year' => 'required|required',
+            'saint_name_of_relativer' => 'required|string',
+            'full_name_of_reliver' => 'required|string',
+            'birth_year_of_relativer' => 'required|numeric',
+            'gender_of_relativer' => 'required|numeric',
+            'parish_id' => 'required|numberic',
+            'phone_number' => 'required|numeric',
+            'date_join' => 'required|date_format:Y-m-d H:i:s',
+            'image_url' => 'nullable',
+            'district_id' => 'required|numeric'
+
         ], $errorMessages);
 
         if($validator->fails()) {
             return $this->notValidateResponse($validator->errors());
         }
 
+        $memberData = [
+            'uuid' => $request->input('uuid'),
+            'full_name' => $request->input('full_name'),
+            'full_name_en' => $request->input('full_name_en'),
+            'saint_name' => $request->input('saint_name'),
+            'gender' => $request->input('gender'),
+            'birth_year' => $request->input('birth_year'),
+            'saint_name_of_relativer' => $request->input('saint_name_of_relativer'),
+            'full_name_of_reliver' => $request->input('full_name_of_relativer'),
+            'birth_year_of_relativer' => $request->input('birth_year_of_relativer'),
+            'gender_of_relativer' => $request->input('gender_of_relativer'),
+            'parish_id' => $request->input('parish_id'),
+            'phone_number' => $request->input('phone_number'),
+            'date_join' => $request->input('date_join'),
+            'image_url' => $request->input('image_url'),
+            'district_id' => $request->input('district_id')
+        ];
+
+        Member::create($memberData);
+
+        return $this->succeedResponse(null, 'Thêm người dùng thành công!');
 
     }
 
     /**
      * @param Request $request
+     * @return mixed
      */
     public function updateMember(Request $request) {
+        $errorMessages = [
+            'member_id' => trans('validation.required', ['field' => trans('messages.member_id')]),
+            'full_name.required' => trans('validation.required', ['field' => trans('messages.full_name')]),
+            'full_name_en.required' => trans('validation.required', ['field', trans('messages.full_name_en')]),
+            'birth_year.required' => trans('validation.required', ['field', trans('messages.birth_year')]),
+            'saint_name.required' => trans('validation.required', ['field', trans('messages.saint_name')]),
+            'gender.required' => trans('validation.required', ['field', trans('messages.gender')]),
+            'saint_name_of_relativer.required' => trans('validation.required', ['field', trans('messages.saint_name_relativer')]),
+            'full_name_of_reliver.required' =>trans('validation.required', ['field', trans('messages.full_name_relativer')]),
+            'birth_year_of_relativer.required' => trans('validation.required', ['field', trans('messages.birth_year_relativer')]),
+            'gender_of_relativer.required' => trans('validation.required', ['field', trans('messages.gender_relativer')]),
+            'parish_id.required' =>trans('validation.required', ['field', trans('messages.parish_id')]),
+            'phone_number.required' => trans('validation.required', ['field', trans('messages.phone')]),
+            'date_join.requried' => trans('validation.required', ['field', trans('messages.date_join')]),
+            'image_url' => trans('validation.required', ['field', trans('messages.image_url')]),
+            'district_id' => trans('validation.required', ['field', trans('messages.district_id')]),
+            'is_dead' => trans('validation.required', ['field', trans('messages.is_dead')]),
+            'is_inherited' => trans('validation.required', ['field', trans('messages.is_inherited')])
+        ];
 
+        $validator = Validator::make($request->all(), [
+            'member_id' => 'required|numeric',
+            'full_name' => 'required|string',
+            'full_name_en' => 'required|string',
+            'saint_name' => 'required|string',
+            'gender' => 'required|numeric',
+            'birth_year' => 'required|numeric',
+            'saint_name_of_relativer' => 'required|string',
+            'full_name_of_reliver' => 'required|string',
+            'birth_year_of_relativer' => 'required|numeric',
+            'gender_of_relativer' => 'required|numeric',
+            'parish_id' => 'required|numberic',
+            'phone_number' => 'required|numeric',
+            'date_join' => 'required|date_format:Y-m-d H:i:s',
+            'image_url' => 'nullable',
+            'district_id' => 'required|numeric',
+            'is_dead' => 'required|boolean',
+            'is_inherited' => 'required|boolean'
+
+        ], $errorMessages);
+
+        if($validator->fails()) {
+            return $this->notValidateResponse($validator->errors());
+        }
+
+        $memberId = $request->input('member_id');
+
+        $member = Member::find($memberId);
+        $member->full_name = $request->input('full_name');
+        $member->full_name_en = $request->input('full_name_en');
+        $member->saint_name = $request->input('saint_name');
+        $member->gender = $request->input('gender');
+        $member->birth_year = $request->input('birth_year');
+        $member->saint_name_of_relativer = $request->input('saint_name_of_relativer');
+        $member->full_name_of_relativer = $request->input('full_name_of_relativer');
+        $member->birth_year_of_relativer = $request->input('birth_year_of_relativer');
+        $member->gender_of_relativer = $request->input('gender_of_relativer');
+        $member->parish_id = $request->input('parish_id');
+        $member->phone_number = $request->input('phone_number');
+        $member->date_join = $request->input('date_join');
+        $member->image_url = $request->input('image_url');
+        $member->district_id = $request->input('district_id');
+        $member->is_dead = $request->input('is_dead');
+        $member->is_inherited = $request->input('is_inherited');
+
+        $saved = $member->save();
+
+        if($saved) {
+            return $this->succeedResponse(null, "Cập nhật thông tin hội viên thành công!");
+        } else {
+            return $this->notValidateResponse(['Không thể cập nhật thông tin hội viên này, vui lòng kiểm tra lại!']);
+        }
     }
 
     /**
