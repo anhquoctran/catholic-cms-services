@@ -9,7 +9,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\ContributeHistory;
-use App\Models\LoginHistory;
 use App\Models\Member;
 use App\Models\Parish;
 use App\Models\Diocese;
@@ -18,9 +17,6 @@ use const DATE_TIME_FORMAT;
 use const DESC;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use const SORT_ASC;
-use const SORT_DESC;
-use const SORT_NONE;
 use function trans;
 use Illuminate\Support\Facades\Validator;
 
