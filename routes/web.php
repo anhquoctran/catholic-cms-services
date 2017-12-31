@@ -97,8 +97,8 @@ $app->group(['prefix' => 'v1'], function() use($app) {
 
             $app->group(['prefix' => 'members'], function() use($app) {
                 $app->post('get_by_parish', 'MemberController@getMemberByParish');
-                $app->post('get_by_district', 'MemberController@getMemberByGender');
-                $app->post('get_by_gender', 'MemberController@getMemberByParish');
+                $app->post('get_by_district', 'MemberController@getMemberByDistrict');
+                $app->post('get_by_gender', 'MemberController@getMemberByGender');
                 $app->post('get_by_diocese', 'MemberController@getMemberByDiocese');
                 $app->post('get_by_province', 'MemberController@getMemberByProvince');
             });
