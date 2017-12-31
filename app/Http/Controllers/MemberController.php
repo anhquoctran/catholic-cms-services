@@ -98,11 +98,10 @@ class MemberController extends Controller
             return $this->notValidateResponse($validator->errors());
         }
 
-        $listMember = Member::with(['parish.diocese' => function($query) use($request) {
-            $query->where('diocestbl.id', '=', $request->input('diocese_id'));
-        }])
+        $listMember = Member::with('parish.diocese')
             ->with('district.province')
             ->where('is_deleted','<>',IS_DELETED)
+            ->where('diocesetbl.id', '=', $request->input('diocese_id'))
             ->paginate($this->getPaginationPerPage());
 
         return $this->succeedResponse($listMember);
