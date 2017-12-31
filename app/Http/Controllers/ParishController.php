@@ -49,6 +49,12 @@ class ParishController extends Controller
         }
     }
 
+    public function getAll() {
+        $listMember = Parish::with('diocese')->get();
+
+        return $this->succeedResponse($listMember);
+    }
+
     /**
      * Create parish
      *

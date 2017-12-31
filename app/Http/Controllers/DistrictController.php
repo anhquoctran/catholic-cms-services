@@ -9,6 +9,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use function is_null;
 use Validator;
 use App\Models\District;
 
@@ -47,8 +48,14 @@ class DistrictController extends Controller
             return $this->notValidateResponse($validator->errors());
         }
 
-        $listDistrictByProvince = District::where('province_id', '=', $request->input('province_id'))->get();
+        $listDistrictByProvince = District::with(['province'])
+            ->where('province_id', '=', $request->input('province_id'))
+            ->get();
+        if(!empty($listDistrictByProvince)) {
+            return $this->succeedResponse($listDistrictByProvince);
+        }
 
-        return $this->succeedResponse($listDistrictByProvince);
+        return $this->notValidateResponse(['Không có dữ liệu']);
+
     }
 }

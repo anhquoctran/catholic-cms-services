@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property mixed $parish
  * @property mixed $district
  * @property int $id
+ * @property mixed $contribute_history
  */
 class Member extends Model
 {
@@ -70,5 +71,9 @@ class Member extends Model
 
     public function district() {
         return $this->hasOne('App\Models\District', 'id', 'district_id');
+    }
+
+    public function contribute_history() {
+        return $this->hasMany('App\Models\ContributeHistory', 'member_id', 'id');
     }
 }
