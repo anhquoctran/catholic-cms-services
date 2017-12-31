@@ -236,7 +236,7 @@ class MemberController extends Controller
             'member_id.required' => trans('validation.required', ['field' => trans('messages.member_id')]),
             'datetime_charge.date_format' => trans('validation.date_format', ['field', trans('messages.datetime_charge')]),
             'datetime_charge.required' => trans('validation.required', ['field', trans('messages.datetime_charge')]),
-            'type_charge.required' => trans('validation.required', ['field', trans('messages')]),
+            'type_charge.required' => trans('validation.required', ['field', trans('messages.type_charge')]),
         ];
         $validator = Validator::make($request->all(), [
             'balance' => 'required|numeric',
@@ -287,8 +287,31 @@ class MemberController extends Controller
 
     /**
      * @param Request $request
+     * @return mixed
      */
     public function addMember(Request $request) {
+        $errorMessages = [
+            'uuid.required' => trans('validation.required', ['field' => trans('messages.uuid')]),
+            'full_name.required' => trans('validation.required', ['field' => trans('messages.full_name')]),
+            'full_name_en.required' => trans('validation.required', ['field', trans('messages.full_name_en')]),
+            'birth_year.required' => trans('validation.required', ['field', trans('messages.birth_year')]),
+            'saint_name.required' => trans('validation.required', ['field', trans('messages.saint_name')]),
+            'gender.required' => trans('validation.required', ['field', trans('messages.gender')]),
+            'saint_name_of_relativer.required' => trans('validation.required', ['field', trans('messages.saint_name_relativer')]),
+            'full_name_of_reliver.required' =>trans('validation.required', ['field', trans('messages.full_name_relativer')]),
+
+        ];
+        $validator = Validator::make($request->all(), [
+            'balance' => 'required|numeric',
+            'member_id' => 'required|numeric',
+            'datetime_charge', 'required|date_format:Y-m-d H:i:s',
+            'type_charge', 'required|numberic|between0,1'
+        ], $errorMessages);
+
+        if($validator->fails()) {
+            return $this->notValidateResponse($validator->errors());
+        }
+
 
     }
 
