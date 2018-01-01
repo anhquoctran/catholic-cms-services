@@ -21,9 +21,7 @@ $app->group(['prefix' => 'v1'], function() use($app) {
         return response()->json($array);
     });
 
-    $app->get('test', function() {
-        return hash('haval256,5', 'data');
-    });
+    //$app->get('test', 'MemberController@getNextUuid');
     /**
      * Login Route
      */
