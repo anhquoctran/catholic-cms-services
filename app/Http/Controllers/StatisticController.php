@@ -18,9 +18,6 @@ use const DATE_TIME_FORMAT;
 use const DESC;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use const SORT_ASC;
-use const SORT_DESC;
-use const SORT_NONE;
 use function trans;
 use Illuminate\Support\Facades\Validator;
 
@@ -86,8 +83,9 @@ class StatisticController extends Controller
         $to = $request->input('to');
         $sort = $request->input('sort');
 
-        $histories = ContributeHistory::with('member')
-            ->whereBetween('datetime_charge', [$from, $to]);
+        $histories = ContributeHistory::with(['member.district.province', 'member.parish.diocese', 'secretary'])
+            ->whereBetween('datetime_charge', [$from, $to])
+            ->where('member_id', '>', 0);
 
         switch ($sort) {
             case ASC :
@@ -119,7 +117,8 @@ class StatisticController extends Controller
         $sort = $request->input('sort');
 
         $histories = ContributeHistory::with('member')
-            ->whereYear('datetime_charge', '=', $year);
+            ->whereYear('datetime_charge', '=', $year)
+            ->where('member_id', '>', 0);
 
         switch ($sort) {
             case ASC :
@@ -155,7 +154,8 @@ class StatisticController extends Controller
 
         $histories = ContributeHistory::with('member')
             ->whereYear('datetime_charge', '=', $year)
-            ->whereMonth('datetime_charge', '=', $month);
+            ->whereMonth('datetime_charge', '=', $month)
+            ->where('member_id', '>', 0);
 
         switch ($sort) {
             case ASC :

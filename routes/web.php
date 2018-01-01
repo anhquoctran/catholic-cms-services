@@ -114,5 +114,10 @@ $app->group(['prefix' => 'v1'], function() use($app) {
                 $app->post('by_month_and_year', 'StatisticController@getMonthAndYear');
             });
         });
+
+        $app->group(['prefix' => 'clean_up'], function() use($app) {
+            $app->get('all', 'CleanupController@resetAll');
+            $app->get('entity', 'CleanupController@resetTable');
+        });
     });
 });

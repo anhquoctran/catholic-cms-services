@@ -81,9 +81,10 @@ class MemberController extends Controller
             return $this->notValidateResponse($validator->errors());
         }
 
-        $listMembers = Member::where('parish_id', '=', $request->input('parish_id'))->paginate($this->getPaginationPerPage());
+        $listMembers = Member::where('parish_id', '=', $request->input('parish_id'))
+            ->paginate($this->getPaginationPerPage());
 
-        return $this->succeedResponse($listMembers);
+        return $this->succeedPaginationResponse($listMembers);
     }
 
     /**
@@ -106,10 +107,12 @@ class MemberController extends Controller
         $listMember = Member::with('parish.diocese')
             ->with('district.province')
             ->where('is_deleted','<>',IS_DELETED)
-            ->where('diocesetbl.id', '=', $request->input('diocese_id'))
+            ->whereHas('parish.diocese', function($query) use($request) {
+                $query->where('diocese_id', '=', $request->input('diocese_id'));
+            })
             ->paginate($this->getPaginationPerPage());
 
-        return $this->succeedResponse($listMember);
+        return $this->succeedPaginationResponse($listMember);
     }
 
     /**
@@ -129,14 +132,15 @@ class MemberController extends Controller
             return $this->notValidateResponse($validator->errors());
         }
 
-         $listMembers = Member::with('parish.dicoese')
-             ->with(['district.province' => function($query) use ($request){
-                 $query->where('district.id', '=', $request->input('district_id'));
-             }])
+         $listMembers = Member::with('parish.diocese')
+             ->with('district.province')
+             ->whereHas('district.province', function($query) use ($request){
+                 $query->where('district_id', '=', $request->input('district_id'));
+             })
              ->where('is_deleted','<>', IS_DELETED)
              ->paginate($this->getPaginationPerPage());
 
-        return $this->succeedResponse($listMembers);
+        return $this->succeedPaginationResponse($listMembers);
     }
 
     /**
@@ -156,14 +160,15 @@ class MemberController extends Controller
             return $this->notValidateResponse($validator->errors());
         }
 
-        $listMembers = Member::with('parish.dicoese')
-            ->with(['district.province' => function($query) use ($request){
-                $query->where('district.province_id', '=', $request->input('district_id'));
-            }])
+        $listMembers = Member::with('parish.diocese')
+            ->with('district.province')
+            ->whereHas('district.province', function($query) use ($request){
+                $query->where('province_id', '=', $request->input('province_id'));
+            })
             ->where('is_deleted','<>', IS_DELETED)
             ->paginate($this->getPaginationPerPage());
 
-        return $this->succeedResponse($listMembers);
+        return $this->succeedPaginationResponse($listMembers);
     }
 
     /**
@@ -188,7 +193,7 @@ class MemberController extends Controller
             ->where('gender', '=', $request->input('gender'))
             ->paginate($this->getPaginationPerPage());
 
-        return $this->succeedResponse($listMembers);
+        return $this->succeedPaginationResponse($listMembers);
     }
 
     /**
@@ -374,10 +379,9 @@ class MemberController extends Controller
             'parish_id.required' =>trans('validation.required', ['field', trans('messages.parish_id')]),
             'phone_number.required' => trans('validation.required', ['field', trans('messages.phone')]),
             'date_join.requried' => trans('validation.required', ['field', trans('messages.date_join')]),
-            'image_url' => trans('validation.required', ['field', trans('messages.image_url')]),
-            'district_id' => trans('validation.required', ['field', trans('messages.district_id')]),
-            'is_dead' => trans('validation.required', ['field', trans('messages.is_dead')]),
-            'is_inherited' => trans('validation.required', ['field', trans('messages.is_inherited')])
+            'district_id.required' => trans('validation.required', ['field', trans('messages.district_id')]),
+            'is_dead.required' => trans('validation.required', ['field', trans('messages.is_dead')]),
+            'is_inherited.required' => trans('validation.required', ['field', trans('messages.is_inherited')])
         ];
 
         $validator = Validator::make($request->all(), [
@@ -391,7 +395,7 @@ class MemberController extends Controller
             'full_name_of_reliver' => 'required|string',
             'birth_year_of_relativer' => 'required|numeric',
             'gender_of_relativer' => 'required|numeric',
-            'parish_id' => 'required|numberic',
+            'parish_id' => 'required|numeric',
             'phone_number' => 'required|numeric',
             'date_join' => 'required|date_format:Y-m-d H:i:s',
             'image_url' => 'nullable',

@@ -43,4 +43,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var bool
      */
     public $timestamps = false;
+
+    public function contributeHistory() {
+        return $this->hasMany('App\Models\ContributeHistory', 'id_secretary', 'id');
+    }
 }

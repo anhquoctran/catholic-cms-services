@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property int $id
  * @property mixed $member
+ * @property mixed $secretary
  */
 class ContributeHistory extends Model
 {
@@ -26,14 +27,18 @@ class ContributeHistory extends Model
         'datetime_charge',
         'type_charge',
         'token',
-        'id_seretary'
+        'id_secretary'
     ];
 
-    protected $hidden = [];
+    protected $hidden = ['token'];
 
     public $timestamps = false;
 
     public function member() {
         return $this->hasOne('App\Models\Member', 'id', 'member_id');
+    }
+
+    public function secretary() {
+        return $this->hasOne('App\Models\User', 'id', 'id_secretary');
     }
 }
