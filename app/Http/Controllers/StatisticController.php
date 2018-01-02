@@ -26,7 +26,7 @@ class StatisticController extends Controller
     public function getOverview() {
         $memberHasLargestBalance = DB::table('membertbl')
             ->where('is_deleted', '<>', IS_DELETED)
-            ->where('balance', DB::raw("(select max(`balance`) from membertbl)"))
+            ->where('balance', DB::raw("(select max(`balance`) from membertbl where is_deleted = 0)"))
             ->first();
 
         $totalOfMembersAvailable = Member::where('is_deleted', '<>', IS_DELETED)

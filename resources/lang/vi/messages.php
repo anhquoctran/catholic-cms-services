@@ -44,5 +44,5 @@ return [
     'entity_name' => 'Tên đối tượng/thực thể',
 
     // Login
-    'login_not_found_data' => 'Đăng nhập thất bại.',
+    'login_not_found_data' => 'Đăng nhập thất bại! Tên đăng nhập hoặc mật khẩu không đúng!',
 ];

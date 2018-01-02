@@ -242,17 +242,19 @@ class MemberController extends Controller
     }
 
     public function contribute(Request $request) {
+
         $errorMessages = [
             'balance.required' => trans('validation.required', ['field' => trans('messages.balance')]),
             'member_id.required' => trans('validation.required', ['field' => trans('messages.member_id')]),
             'datetime_charge.required' => trans('validation.required', ['field' => trans('messages.datetime_charge')]),
             'type_charge.required' => trans('validation.required', ['field' => trans('messages.type_charge')]),
         ];
+        //dd($errorMessages);
         $validator = Validator::make($request->all(), [
             'balance' => 'required|numeric',
             'member_id' => 'required|numeric',
-            'datetime_charge', 'required|date_format:Y-m-d H:i:s',
-            'type_charge', 'required|numberic|between0,1'
+            'datetime_charge' => 'required|date_format:Y-m-d H:i:s',
+            'type_charge' => 'required|numeric|between:0,1'
         ], $errorMessages);
 
         if($validator->fails()) {
