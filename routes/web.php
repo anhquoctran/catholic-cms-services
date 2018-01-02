@@ -14,7 +14,6 @@
 /**
  * Login Route
  */
-$app->post('auth/login', 'AuthController@postLogin');
 
 $app->group(['prefix' => 'v1'], function() use($app) {
     $app->get('/', function () use ($app) {
@@ -62,14 +61,24 @@ $app->group(['prefix' => 'v1'], function() use($app) {
             $app->post('single', 'DistrictController@getSingleDistrict');
         });
 
-        $app->get('test', 'MemberController@getAllMembers');
-
         /**
          * Member route
          */
         $app->group(['prefix' => 'member'], function () use ($app) {
             $app->delete('delete', 'MemberController@deleteMember');
+            $app->post('fetch_all', 'MemberController@getMembersWithPagination');
+            $app->post('search', 'MemberController@search');
+            $app->post('create', 'MemberController@addMember');
+            $app->put('update', 'MemberController@updateMember');
+
+            $app->post('count', 'MemberController@getTotalMembersAvailable');
+            $app->get('get_all', 'MemberController@getAllMembers');
         });
+
+        /**
+         * Contribute route
+         */
+        $app->post('contribute/charge', 'MemberController@contribute');
 
         /**
          * Parish Route
@@ -78,7 +87,30 @@ $app->group(['prefix' => 'v1'], function() use($app) {
             $app->post('fetch_all', 'ParishController@listParish');
             $app->post('create', 'ParishController@createParish');
             $app->put('update', 'ParishController@updateParish');
-            $app->delete('delete', 'ParishController@deleteParish');
+            $app->delete('remove', 'ParishController@removeParish');
+            $app->delete('remove_all', 'ParishController@removeAllParish');
+            $app->get('get_all', 'ParishController@getAll');
+        });
+
+        /**
+         * Statistic Route
+         */
+        $app->group(['prefix' => 'statistic'], function() use($app) {
+            $app->post('overview', 'StatisticController@getOverview');
+
+            $app->group(['prefix' => 'members'], function() use($app) {
+                $app->post('get_by_parish', 'MemberController@getMemberByParish');
+                $app->post('get_by_district', 'MemberController@getMemberByDistrict');
+                $app->post('get_by_gender', 'MemberController@getMemberByGender');
+                $app->post('get_by_diocese', 'MemberController@getMemberByDiocese');
+                $app->post('get_by_province', 'MemberController@getMemberByProvince');
+            });
+
+            $app->group(['prefix' => 'contribute'], function() use($app) {
+                $app->post('by_time_range', 'StatisticController@getByTimeRange');
+                $app->post('by_year', 'StatisticController@getByYear');
+                $app->post('by_month_and_year', 'StatisticController@getMonthAndYear');
+            });
         });
     });
 });

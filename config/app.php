@@ -40,4 +40,10 @@ return [
     */
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'vi'),
 
+     'entities' => [
+        'member' => 'membertbl',
+        'parish' => 'parishtbl',
+        'contribute_history' => 'contributehistorytbl',
+        'login_history' => 'loginhistorytbl'
+    ]
 ];

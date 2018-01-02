@@ -25,7 +25,7 @@ class StatisticController extends Controller
     public function getOverview() {
         $memberHasLargestBalance = DB::table('membertbl')
             ->where('is_deleted', '<>', IS_DELETED)
-            ->where('balance', DB::raw("(select max(`balance`) from membertbl)"))
+            ->where('balance', DB::raw("(select max(`balance`) from membertbl where is_deleted = 0)"))
             ->first();
 
         $totalOfMembersAvailable = Member::where('is_deleted', '<>', IS_DELETED)
@@ -82,8 +82,9 @@ class StatisticController extends Controller
         $to = $request->input('to');
         $sort = $request->input('sort');
 
-        $histories = ContributeHistory::with('member')
-            ->whereBetween('datetime_charge', [$from, $to]);
+        $histories = ContributeHistory::with(['member.district.province', 'member.parish.diocese', 'secretary'])
+            ->whereBetween('datetime_charge', [$from, $to])
+            ->where('member_id', '>', 0);
 
         switch ($sort) {
             case ASC :
@@ -115,7 +116,8 @@ class StatisticController extends Controller
         $sort = $request->input('sort');
 
         $histories = ContributeHistory::with('member')
-            ->whereYear('datetime_charge', '=', $year);
+            ->whereYear('datetime_charge', '=', $year)
+            ->where('member_id', '>', 0);
 
         switch ($sort) {
             case ASC :
@@ -151,7 +153,8 @@ class StatisticController extends Controller
 
         $histories = ContributeHistory::with('member')
             ->whereYear('datetime_charge', '=', $year)
-            ->whereMonth('datetime_charge', '=', $month);
+            ->whereMonth('datetime_charge', '=', $month)
+            ->where('member_id', '>', 0);
 
         switch ($sort) {
             case ASC :

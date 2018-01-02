@@ -15,6 +15,7 @@ return [
     'diocese_id' => 'Mã giáo phận',
     'list_member_id' => 'Danh sách mã thành viên',
     'list_parish_id' => 'Danh sách mã giáo xứ',
+
     'query' => 'Từ khóa tìm kiếm',
     'full_name' => 'Họ tên hội viên',
     'full_name_en' => 'Họ tên hội viên không dấu',
@@ -40,7 +41,8 @@ return [
     'sort'=>'Sắp xếp',
     'year' => 'Năm',
     'month' => 'Tháng',
+    'entity_name' => 'Tên đối tượng/thực thể',
 
     // Login
-    'login_not_found_data' => 'Đăng nhập thất bại.',
+    'login_not_found_data' => 'Đăng nhập thất bại! Tên đăng nhập hoặc mật khẩu không đúng!',
 ];
