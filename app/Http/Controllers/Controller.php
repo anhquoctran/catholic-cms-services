@@ -49,7 +49,7 @@ class Controller extends BaseController
      *
      * @return string
      */
-    public function getMessage($code)
+    private function getMessage($code)
     {
         return isset(Response::$statusTexts[$code]) ? Response::$statusTexts[$code] : '';
     }
@@ -63,7 +63,7 @@ class Controller extends BaseController
      *
      * @return bool
      */
-    public function buildResponse($status, $result = [], $extraResponse = [])
+    private function buildResponse($status, $result = [], $extraResponse = [])
     {
         if (!is_array($result) && !in_array($result ,['null',null])) {
             $result = $result->toArray();
@@ -96,7 +96,7 @@ class Controller extends BaseController
      *
      * @return bool
      */
-    public function succeedResponse($data = null, $extra = null)
+    protected function succeedResponse($data = null, $extra = null)
     {
         return $this->buildResponse(true, $data, $extra);
     }
@@ -109,7 +109,7 @@ class Controller extends BaseController
      *
      * @return bool
      */
-    public function failResponse($errorCode = null, $errorMessage = [])
+    protected function failResponse($errorCode = null, $errorMessage = [])
     {
         if (empty($errorMessage)) {
             array_push($errorMessage,$this->getMessage($errorCode));
@@ -131,7 +131,7 @@ class Controller extends BaseController
      * @return bool
      *
      */
-    public function notValidateResponse($errors = [])
+    protected function notValidateResponse($errors = [])
     {
         if (!is_array($errors)) {
             $errors = $errors->toArray();
@@ -150,7 +150,7 @@ class Controller extends BaseController
     /**
      * Get pagination per page
      */
-    public function getPaginationPerPage()
+    protected function getPaginationPerPage()
     {
         $requestPerPage = (int) app()->make('request')->input('per_page');
 
@@ -160,7 +160,7 @@ class Controller extends BaseController
     /**
      * Auto resolve pagination current page by request param current_page
      */
-    public function resolvePaginationCurrentPage()
+    protected function resolvePaginationCurrentPage()
     {
         Paginator::currentPageResolver(function () {
             $request = app('request');
@@ -177,7 +177,7 @@ class Controller extends BaseController
      *
      * @return bool
      */
-    public function succeedPaginationResponse($pagination, $dataKey = 'items', $extra = [])
+    protected function succeedPaginationResponse($pagination, $dataKey = 'items', $extra = [])
     {
         $pagination->setPath('/' . app()->make('request')->path());
 

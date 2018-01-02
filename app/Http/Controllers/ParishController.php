@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Diocese;
 use App\Models\Parish;
 use Illuminate\Http\Request;
+use const IS_DELETED;
 use Validator;
 
 /**
@@ -68,7 +69,7 @@ class ParishController extends Controller
     {
         $errorMessages = [
             'name.required' => trans('validation.required', ['field' => trans('messages.name')]),
-            'name.unique' => trans('validation.unique', ['field' => trans('messages.name')]),
+            'name.unique' => trans('validation.unique', ['field' => trans('messages.parish_name')]),
             'diocese_id.required' => trans('validation.required', ['field' => 'diocese_id']),
         ];
 
@@ -174,7 +175,10 @@ class ParishController extends Controller
             return $this->notValidateResponse($validator->errors());
         }
 
-        Parish::destroy($request->input('list_parish_id'));
+        Parish::whereIn('id', $request->input('list_parish_id'))->update([
+            'is_deleted' => IS_DELETED,
+            'name' => ''
+        ]);
 
         return $this->succeedResponse(null);
     }

@@ -8,7 +8,7 @@ return [
     ],
     'date_format' => ':field không đúng định dạng :format.',
     'after_or_equal' => ':from không được lớn hơn :to',
-    'unique' => ':field không được trùng.',
+    'unique' => ':field không được trùng. Giá trị vừa nhập đã có trong Cơ sở dữ liệu',
     'exists_db' => ':field không tồn tại.',
     'array' => ':field phải là một mảng',
 ];
