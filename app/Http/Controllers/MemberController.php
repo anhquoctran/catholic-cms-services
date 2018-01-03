@@ -62,7 +62,7 @@ class MemberController extends Controller
             return $this->notValidateResponse($validator->errors());
         }
 
-        $user = Member::whereIn('id', $request->input('member_id'))->first();
+        $user = Member::where('is_deleted', '=', 0)->whereIn('id', $request->input('member_id'))->first();
 
         return $this->succeedResponse($user);
     }
