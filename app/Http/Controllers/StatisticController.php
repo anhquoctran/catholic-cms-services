@@ -44,11 +44,11 @@ class StatisticController extends Controller
 
         $totalOfBalance = DB::table('membertbl')
             ->selectRaw('sum(balance) as total')
-            ->where('is_deleted', '!=', IS_DELETED)
+            ->where('is_deleted', '<>', IS_DELETED)
             ->first();
 
         $totalOfMemberHasContributed = Member::where('balance', '!=', 0)
-            ->where('is_deleted', '!=', IS_DELETED)
+            ->where('is_deleted', '<>', IS_DELETED)
             ->distinct('id')
             ->count();
 
@@ -87,7 +87,7 @@ class StatisticController extends Controller
         $histories = ContributeHistory::with(['member.district.province', 'member.parish.diocese', 'secretary'])
             ->whereBetween('datetime_charge', [$from, $to])
             ->where('member_id', '>', 0)
-            ->where('is_deleted', '!=', IS_DELETED);
+            ->where('is_deleted', '<>', IS_DELETED);
 
         switch ($sort) {
             case ASC :
@@ -119,7 +119,7 @@ class StatisticController extends Controller
         $sort = $request->input('sort');
 
         $histories = ContributeHistory::with('member')
-            ->where('is_deleted', '!=', IS_DELETED)
+            ->where('is_deleted', '<>', IS_DELETED)
             ->whereYear('datetime_charge', '=', $year)
             ->where('member_id', '>', 0);
 
@@ -156,7 +156,7 @@ class StatisticController extends Controller
         $sort = $request->input('sort');
 
         $histories = ContributeHistory::with('member')
-            ->where('is_deleted', '!=', IS_DELETED)
+            ->where('is_deleted', '<>', IS_DELETED)
             ->whereYear('datetime_charge', '=', $year)
             ->whereMonth('datetime_charge', '=', $month)
             ->where('member_id', '>', 0);
