@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use function sha1;
 use Validator;
 use Carbon\Carbon;
+use function var_dump;
 
 /**
  * Class ExampleController
@@ -124,12 +125,14 @@ class AuthController extends Controller
      */
     public function putPassword(Request $request)
     {
+        //dd($request->all());
         $errorMessages = [
-            'new_password.required' => trans('validation.required', ['field' => trans('messages.password')]),
+
+            'new_pass.required' => trans('validation.required', ['field' => trans('messages.password')]),
         ];
 
         $validator = Validator::make($request->all(), [
-            'new_password' => 'required',
+            'new_pass' => 'required',
         ], $errorMessages);
 
         if ($validator->fails()) {
@@ -137,7 +140,7 @@ class AuthController extends Controller
         }
 
         $user = User::find(app('auth')->user()->id);
-        $user->password = Hash::make(base64_decode(base64_decode($request->input('new_password'))));
+        $user->password = Hash::make(base64_decode(base64_decode($request->input('new_pass'))));
         $user->save();
 
         return $this->succeedResponse($user);

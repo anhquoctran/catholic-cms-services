@@ -34,8 +34,8 @@ $app->group(['prefix' => 'v1'], function() use($app) {
          */
         $app->group(['prefix' => 'auth'], function() use($app) {
             $app->post('logout', 'AuthController@postLogout');
-            $app->put('display_name', 'AuthController@putDisplayName');
-            $app->put('password', 'AuthController@putPassword');
+            $app->post('display_name', 'AuthController@putDisplayName');
+            $app->post('password', 'AuthController@putPassword');
             $app->post('latest', 'AuthController@getLatest');
             $app->post('history', 'AuthController@getHistory');
         });
@@ -65,11 +65,11 @@ $app->group(['prefix' => 'v1'], function() use($app) {
          * Member route
          */
         $app->group(['prefix' => 'members'], function () use ($app) {
-            $app->delete('delete', 'MemberController@deleteMember');
+            $app->post('delete', 'MemberController@deleteMember');
             $app->post('fetch_all', 'MemberController@getMembersWithPagination');
             $app->post('search', 'MemberController@search');
             $app->post('create', 'MemberController@addMember');
-            $app->put('update', 'MemberController@updateMember');
+            $app->post('update', 'MemberController@updateMember');
 
             $app->post('count', 'MemberController@getTotalMembersAvailable');
             $app->get('get_all', 'MemberController@getAllMembers');
@@ -86,9 +86,9 @@ $app->group(['prefix' => 'v1'], function() use($app) {
         $app->group(['prefix' => 'parishs'], function() use($app) {
             $app->post('fetch_all', 'ParishController@listParish');
             $app->post('create', 'ParishController@createParish');
-            $app->put('update', 'ParishController@updateParish');
-            $app->delete('remove', 'ParishController@removeParish');
-            $app->delete('remove_all', 'ParishController@removeAllParish');
+            $app->post('update', 'ParishController@updateParish');
+            $app->post('remove', 'ParishController@removeParish');
+            $app->post('remove_all', 'ParishController@removeAllParish');
             $app->get('get_all', 'ParishController@getAll');
         });
 
