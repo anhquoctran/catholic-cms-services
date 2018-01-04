@@ -147,6 +147,10 @@ class Controller extends BaseController
         return $this->failResponse(Response::HTTP_BAD_REQUEST, $messages);
     }
 
+    protected function isNullOrEmptyString($question){
+        return (!isset($question) || trim($question)==='');
+    }
+
     /**
      * Get pagination per page
      */

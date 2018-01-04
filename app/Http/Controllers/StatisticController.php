@@ -169,4 +169,8 @@ class StatisticController extends Controller
 
         return $this->succeedResponse($histories->get());
     }
+
+    public function getContributeByPerson(Request $request) {
+
+    }
 }

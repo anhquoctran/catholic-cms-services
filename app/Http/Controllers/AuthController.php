@@ -8,6 +8,7 @@ use App\Models\LoginHistory;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use function sha1;
+use function trans;
 use Validator;
 use Carbon\Carbon;
 use function var_dump;
@@ -44,6 +45,12 @@ class AuthController extends Controller
         }
 
         $user = User::where('username', $request->input('username'))->first();
+
+        $token = $user->access_token;
+
+        if(!$this->isNullOrEmptyString($token)) {
+            return $this->failResponse(Response::HTTP_FORBIDDEN,[trans('messages.access_denied')]);
+        }
 
         if (empty($user)) {
             return $this->failResponse(Response::HTTP_BAD_REQUEST, [trans('messages.login_not_found_data')]);

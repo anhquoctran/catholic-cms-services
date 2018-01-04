@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers;
 
+use function date;
 use function dd;
 use Illuminate\Http\Request;
 use App\Models\Member;
@@ -332,17 +333,17 @@ class MemberController extends Controller
             'full_name' => 'required|string',
             'full_name_en' => 'required|string',
             'saint_name' => 'required|string',
-            'gender' => 'required|numeric',
-            'birth_year' => 'required|required',
-            'saint_name_of_relativer' => 'required|string',
-            'full_name_of_relativer' => 'required|string',
-            'birth_year_of_relativer' => 'required|numeric',
-            'gender_of_relativer' => 'required|numeric',
-            'parish_id' => 'required|numeric',
-            'phone_number' => 'required|numeric',
-            'date_join' => 'required|date_format:Y-m-d H:i:s',
-            'image_url' => 'nullable',
-            'district_id' => 'required|numeric'
+            'gender' => 'nullable|numeric',
+            'birth_year' => 'nullable|numeric',
+            'saint_name_of_relativer' => 'nullable|string',
+            'full_name_of_relativer' => 'nullable|string',
+            'birth_year_of_relativer' => 'nullable|numeric',
+            'gender_of_relativer' => 'nullable|numeric',
+            'parish_id' => 'nullable|numeric',
+            'phone_number' => 'nullable|numeric',
+            'date_join' => 'nullable|date_format:Y-m-d H:i:s',
+            'image_url' => 'nullable|string',
+            'district_id' => 'nullable|numeric'
 
         ], $errorMessages);
 
@@ -355,17 +356,17 @@ class MemberController extends Controller
             'full_name' => $request->input('full_name'),
             'full_name_en' => $request->input('full_name_en'),
             'saint_name' => $request->input('saint_name'),
-            'gender' => $request->input('gender'),
-            'birth_year' => $request->input('birth_year'),
-            'saint_name_of_relativer' => $request->input('saint_name_of_relativer'),
-            'full_name_of_relativer' => $request->input('full_name_of_relativer'),
-            'birth_year_of_relativer' => $request->input('birth_year_of_relativer'),
-            'gender_of_relativer' => $request->input('gender_of_relativer'),
-            'parish_id' => $request->input('parish_id'),
-            'phone_number' => $request->input('phone_number'),
-            'date_join' => $request->input('date_join'),
-            'image_url' => $request->input('image_url'),
-            'district_id' => $request->input('district_id')
+            'gender' => $request->input('gender') ?? 1,
+            'birth_year' => $request->input('birth_year') ?? 1970,
+            'saint_name_of_relativer' => $request->input('saint_name_of_relativer') ?? '',
+            'full_name_of_relativer' => $request->input('full_name_of_relativer') ?? '',
+            'birth_year_of_relativer' => $request->input('birth_year_of_relativer') ?? '',
+            'gender_of_relativer' => $request->input('gender_of_relativer') ?? '',
+            'parish_id' => $request->input('parish_id') ?? 1,
+            'phone_number' => $request->input('phone_number') ?? '',
+            'date_join' => $request->input('date_join') ?? date("Y-m-d H:i:s"),
+            'image_url' => $request->input('image_url') ?? '',
+            'district_id' => $request->input('district_id') ?? 1
         ];
 
         Member::create($memberData);
