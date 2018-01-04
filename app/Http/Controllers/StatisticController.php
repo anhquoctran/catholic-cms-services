@@ -86,8 +86,7 @@ class StatisticController extends Controller
 
         $histories = ContributeHistory::with(['member.district.province', 'member.parish.diocese', 'secretary'])
             ->whereBetween('datetime_charge', [$from, $to])
-            ->where('member_id', '>', 0)
-            ->where('is_deleted', '<>', IS_DELETED);
+            ->where('member_id', '>', 0);
 
         switch ($sort) {
             case ASC :
@@ -119,7 +118,6 @@ class StatisticController extends Controller
         $sort = $request->input('sort');
 
         $histories = ContributeHistory::with('member')
-            ->where('is_deleted', '<>', IS_DELETED)
             ->whereYear('datetime_charge', '=', $year)
             ->where('member_id', '>', 0);
 
@@ -156,7 +154,6 @@ class StatisticController extends Controller
         $sort = $request->input('sort');
 
         $histories = ContributeHistory::with('member')
-            ->where('is_deleted', '<>', IS_DELETED)
             ->whereYear('datetime_charge', '=', $year)
             ->whereMonth('datetime_charge', '=', $month)
             ->where('member_id', '>', 0);

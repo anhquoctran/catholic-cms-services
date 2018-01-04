@@ -475,7 +475,7 @@ class MemberController extends Controller
         }
 
         Member::whereIn('id', $request->input('list_member_id'))->update(['is_deleted' => IS_DELETED, 'uuid' => '']);
-
+        ContributeHistory::whereIn('member_id', $request->input('list_member_id'))->update(['member_id' => 0]);
         return $this->succeedResponse(null);
     }
 }
