@@ -356,17 +356,17 @@ class MemberController extends Controller
             'full_name' => $request->input('full_name'),
             'full_name_en' => $request->input('full_name_en'),
             'saint_name' => $request->input('saint_name'),
-            'gender' => $request->input('gender') ?? 1,
-            'birth_year' => $request->input('birth_year') ?? 1970,
-            'saint_name_of_relativer' => $request->input('saint_name_of_relativer') ?? '',
-            'full_name_of_relativer' => $request->input('full_name_of_relativer') ?? '',
-            'birth_year_of_relativer' => $request->input('birth_year_of_relativer') ?? '',
-            'gender_of_relativer' => $request->input('gender_of_relativer') ?? '',
-            'parish_id' => $request->input('parish_id') ?? 1,
-            'phone_number' => $request->input('phone_number') ?? '',
-            'date_join' => $request->input('date_join') ?? date("Y-m-d H:i:s"),
-            'image_url' => $request->input('image_url') ?? '',
-            'district_id' => $request->input('district_id') ?? 1
+            'gender' => $request->input('gender') == null ? 1 : $request->input('gender') ,
+            'birth_year' => $request->input('birth_year') == null ? 1970 : $request->input('birth_year'),
+            'saint_name_of_relativer' => $request->input('saint_name_of_relativer') == null ? '' : $request->input('saint_name_of_relativer'),
+            'full_name_of_relativer' => $request->input('full_name_of_relativer') == null ? '' : $request->input('full_name_of_relativer'),
+            'birth_year_of_relativer' => $request->input('birth_year_of_relativer') ? '' : $request->input('birth_year_of_relativer'),
+            'gender_of_relativer' => $request->input('gender_of_relativer') ? '' : $request->input('gender_of_relativer'),
+            'parish_id' => $request->input('parish_id') ? 1 : $request->input('parish_id'),
+            'phone_number' => $request->input('phone_number') ? '' : $request->input('phone_number'),
+            'date_join' => $request->input('date_join') ? date("Y-m-d H:i:s") : $request->input('date_join') ,
+            'image_url' => $request->input('image_url') ? '' : $request->input('image_url'),
+            'district_id' => $request->input('district_id') ? 1 : $request->input('district_id')
         ];
 
         Member::create($memberData);
