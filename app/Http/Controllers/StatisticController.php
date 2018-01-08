@@ -171,6 +171,34 @@ class StatisticController extends Controller
     }
 
     public function getContributeByPerson(Request $request) {
+        $errorMessages = [
+            'member_id.required' => trans('validation.required', ['field' => trans('messages.member_id')]),
+            'sort.numeric' => trans('validation.numeric', ['field' => trans('messages.sort')])
+        ];
+        $validator = Validator::make($request->all(), [
+            'member_id' => 'required|numeric',
+            'sort' => 'numeric'
+        ], $errorMessages);
 
+        if($validator->fails()) {
+            return $this->notValidateResponse($validator->errors());
+        }
+        $sort = $request->input('sort');
+        $histories = ContributeHistory::with(['member.parish.diocese', 'member.district.province', 'secretary'])
+            ->where('member_id', '>', 0)
+            ->whereHas('member', function($query) use($request) {
+                $query->where('id', '=', $request->input('member_id'));
+             });
+
+        switch ($sort) {
+            case ASC :
+                $histories = $histories->orderBy('balance');
+                break;
+            case DESC:
+                $histories = $histories->orderByDesc('balance');
+                break;
+        }
+
+        return $this->succeedPaginationResponse($histories->paginate($this->getPaginationPerPage()));
     }
 }

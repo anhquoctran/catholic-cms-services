@@ -70,7 +70,7 @@ $app->group(['prefix' => 'v1'], function() use($app) {
             $app->post('search', 'MemberController@search');
             $app->post('create', 'MemberController@addMember');
             $app->post('update', 'MemberController@updateMember');
-
+            $app->post('get_charge_history', 'StatisticController@getContributeByPerson');
             $app->post('count', 'MemberController@getTotalMembersAvailable');
             $app->get('get_all', 'MemberController@getAllMembers');
         });
@@ -104,6 +104,8 @@ $app->group(['prefix' => 'v1'], function() use($app) {
                 $app->post('get_by_gender', 'MemberController@getMemberByGender');
                 $app->post('get_by_diocese', 'MemberController@getMemberByDiocese');
                 $app->post('get_by_province', 'MemberController@getMemberByProvince');
+
+                $app->post('filter_by', 'MemberController@findByCondition');
             });
 
             $app->group(['prefix' => 'contribute'], function() use($app) {
