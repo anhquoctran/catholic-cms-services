@@ -263,17 +263,13 @@ class MemberController extends Controller
         if($validator->fails()) {
             return $this->notValidateResponse($validator->errors());
         }
-        $keyword = $request->input('keyword');
-        $sql = Member::where('is_deleted', '=', IS_DELETED);
-        //return response()->json($sql->get());
 
-            //->where('full_name', 'LIKE', "%{$keyword}%");
-        //dd($sql->toSql());
-        //if (!empty($request->input('keyword'))) {
+        $sql = Member::with('parish.diocese', 'district.province')->where('is_deleted', '=', IS_DELETED);
 
-            //$sql->where('full_name', 'LIKE', "%{$keyword}%");
-        //}
-
+        if (!empty($request->input('keyword'))) {
+            $keyword = $request->input('keyword');
+            $sql->where('full_name', 'LIKE', "%{$keyword}%");
+        }
 
         if (!empty($request->input('diocese_id'))) {
             $sql->whereHas('parish.diocese', function($q) use($request) {
@@ -287,7 +283,7 @@ class MemberController extends Controller
             $sql->whereHas('district.province', function ($q) use($request) {
                 $q->where('province_id', '=', $request->input('province_id'));
             });
-        } else if(!empty('district_id')) {
+        } else if(!empty($request->input('district_id'))) {
             $sql->where('district_id', '=', $request->input('district_id'));
         }
 
@@ -295,7 +291,9 @@ class MemberController extends Controller
             $sql->where('gender', '=', $request->input('gender'));
         }
 
-        return $this->succeedResponse($sql->get());
+        return $this->succeedResponse(
+            $sql->paginate($this->getPaginationPerPage())
+        );
     }
 
     public function contribute(Request $request) {
