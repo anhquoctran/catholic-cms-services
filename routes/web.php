@@ -11,8 +11,14 @@
 |
 */
 
+
+
+$app->get('test', function() use($app){
+    $app->make('view')->make('index');
+});
+
 /**
- * Login Route
+ * REST API Routing
  */
 
 $app->group(['prefix' => 'v1'], function() use($app) {
@@ -21,7 +27,9 @@ $app->group(['prefix' => 'v1'], function() use($app) {
         return response()->json($array);
     });
 
-    //$app->get('test', 'MemberController@getNextUuid');
+    $app->get('get_by_email', 'AuthController@findByEmail');
+    $app->post('forgot_update', 'AuthController@resetPassword');
+
     /**
      * Login Route
      */
@@ -73,6 +81,7 @@ $app->group(['prefix' => 'v1'], function() use($app) {
             $app->post('get_charge_history', 'StatisticController@getContributeByPerson');
             $app->post('count', 'MemberController@getTotalMembersAvailable');
             $app->get('get_all', 'MemberController@getAllMembers');
+
         });
 
         /**

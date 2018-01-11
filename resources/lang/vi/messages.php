@@ -43,8 +43,9 @@ return [
     'month' => 'Tháng',
     'entity_name' => 'Tên đối tượng/thực thể',
     'parish_name' => "Tên giáo xứ",
-
+    'email' => 'Địa chỉ email',
     'keyword' => 'Từ khóa',
+    'uid' => 'Mã người dùng',
     // Login
     'login_not_found_data' => 'Đăng nhập thất bại! Tên đăng nhập hoặc mật khẩu không đúng!',
     'access_denied' => 'Đăng nhập thất bại! Tài khoản này đang được đăng nhập tại một thiết bị khác!'

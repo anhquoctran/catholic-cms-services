@@ -96,7 +96,7 @@ class Controller extends BaseController
      *
      * @return bool
      */
-    protected function succeedResponse($data = null, $extra = null)
+    public function succeedResponse($data = null, $extra = null)
     {
         return $this->buildResponse(true, $data, $extra);
     }
@@ -109,7 +109,7 @@ class Controller extends BaseController
      *
      * @return bool
      */
-    protected function failResponse($errorCode = null, $errorMessage = [])
+    public function failResponse($errorCode = null, $errorMessage = [])
     {
         if (empty($errorMessage)) {
             array_push($errorMessage,$this->getMessage($errorCode));

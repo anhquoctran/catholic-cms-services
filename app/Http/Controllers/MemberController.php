@@ -264,7 +264,7 @@ class MemberController extends Controller
             return $this->notValidateResponse($validator->errors());
         }
 
-        $sql = Member::with('parish.diocese', 'district.province')->where('is_deleted', '=', IS_DELETED);
+        $sql = Member::with('parish.diocese', 'district.province')->where('is_deleted', '<>', IS_DELETED);
 
         if (!empty($request->input('keyword'))) {
             $keyword = $request->input('keyword');
@@ -291,7 +291,7 @@ class MemberController extends Controller
             $sql->where('gender', '=', $request->input('gender'));
         }
 
-        return $this->succeedResponse(
+        return $this->succeedPaginationResponse(
             $sql->paginate($this->getPaginationPerPage())
         );
     }

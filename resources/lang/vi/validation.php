@@ -14,5 +14,6 @@ return [
     'numeric' => ':field phải là kiểu số',
     'string' => ':field phải là một chuỗi ký tự',
     'date' => ':field phải có định dạng ngày tháng năm (yyyy-MM-dd hh:mm:ss)',
-    'boolean' => ':field phải có giá trị true/false'
+    'boolean' => ':field phải có giá trị true/false',
+    'email' => ':field phải là địa chỉ email hợp lệ (someone@example.com)'
 ];
