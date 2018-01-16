@@ -117,7 +117,7 @@ class StatisticController extends Controller
         $year = $request->input('year');
         $sort = $request->input('sort');
 
-        $histories = ContributeHistory::with('member')
+        $histories = ContributeHistory::with(['member.district.province', 'member.parish.diocese', 'secretary'])
             ->whereYear('datetime_charge', '=', $year)
             ->where('member_id', '>', 0);
 
@@ -153,7 +153,7 @@ class StatisticController extends Controller
         $month = $request->input('month');
         $sort = $request->input('sort');
 
-        $histories = ContributeHistory::with('member')
+        $histories = ContributeHistory::with(['member.district.province', 'member.parish.diocese', 'secretary'])
             ->whereYear('datetime_charge', '=', $year)
             ->whereMonth('datetime_charge', '=', $month)
             ->where('member_id', '>', 0);

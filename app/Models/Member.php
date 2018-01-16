@@ -62,7 +62,8 @@ class Member extends Model
         'description',
         'image_url',
         'district_id',
-        'is_inherited'
+        'is_inherited',
+        'is_more_info'
     ];
 
     public function parish() {

@@ -120,7 +120,7 @@ $app->group(['prefix' => 'v1'], function() use($app) {
             $app->group(['prefix' => 'contribute'], function() use($app) {
                 $app->post('by_time_range', 'StatisticController@getByTimeRange');
                 $app->post('by_year', 'StatisticController@getByYear');
-                $app->post('by_month_and_year', 'StatisticController@getMonthAndYear');
+                $app->post('by_month_and_year', 'StatisticController@getByMonthYear');
             });
         });
 

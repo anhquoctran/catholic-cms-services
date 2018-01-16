@@ -336,7 +336,7 @@ class MemberController extends Controller
 
             if($saved) {
                 $history = new ContributeHistory();
-                $history->balance = $member->balance;
+                $history->balance = $request->input('balance');
                 $history->id_secretary = $currentUserId;
                 $history->member_id = $member_id;
                 $history->datetime_charge = $datetime_charge;
@@ -371,6 +371,8 @@ class MemberController extends Controller
             'full_name_en.required' => trans('validation.required', ['field' => trans('messages.full_name_en')]),
             'birth_year.numeric' => trans('validation.numeric', ['field' => trans('messages.birth_year')]),
             'saint_name.string' => trans('validation.string', ['field' => trans('messages.saint_name')]),
+            'is_more_info.required' => trans('validation.required', ['field' => trans('messages.is_more_info')]),
+            'is_more_info.boolean' => trans('validation.boolean', ['field' => trans('messages.is_more_info')]),
             'gender.numeric' => trans('validation.numeric', ['field' => trans('messages.gender')]),
             'saint_name_of_relativer.string' => trans('validation.string', ['field' => trans('messages.saint_name_relativer')]),
             'full_name_of_relativer.string' =>trans('validation.string', ['field' => trans('messages.full_name_of_relativer')]),
@@ -396,7 +398,8 @@ class MemberController extends Controller
             'phone_number' => 'nullable|numeric',
             'date_join' => 'nullable|date_format:Y-m-d H:i:s',
             'image_url' => 'nullable|string',
-            'district_id' => 'nullable|numeric'
+            'district_id' => 'nullable|numeric',
+            'is_more_info' => 'required|boolean'
 
         ], $errorMessages);
 
@@ -404,23 +407,29 @@ class MemberController extends Controller
             return $this->notValidateResponse($validator->errors());
         }
 
+        $isMoreInfo = $request->input('is_more_info');
+
         $memberData = [
             'uuid' => self::getNextUuid(),
             'full_name' => $request->input('full_name'),
             'full_name_en' => $request->input('full_name_en'),
             'saint_name' => $request->input('saint_name'),
-            'gender' => empty($request->input('gender')) ? 1 : $request->input('gender') ,
-            'birth_year' => empty($request->input('birth_year')) ? 1970 : $request->input('birth_year'),
-            'saint_name_of_relativer' => empty($request->input('saint_name_of_relativer')) ? '' : $request->input('saint_name_of_relativer'),
-            'full_name_of_relativer' => empty($request->input('full_name_of_relativer')) ? '' : $request->input('full_name_of_relativer'),
-            'birth_year_of_relativer' => empty($request->input('birth_year_of_relativer')) ? '' : $request->input('birth_year_of_relativer'),
-            'gender_of_relativer' => empty($request->input('gender_of_relativer')) ? '' : $request->input('gender_of_relativer'),
-            'parish_id' => empty($request->input('parish_id')) ? 1 : $request->input('parish_id'),
-            'phone_number' => empty($request->input('phone_number')) ? '' : $request->input('phone_number'),
-            'date_join' => empty($request->input('date_join')) ? date("Y-m-d H:i:s") : $request->input('date_join') ,
-            'image_url' => empty($request->input('image_url')) ? '' : $request->input('image_url'),
-            'district_id' => empty($request->input('district_id')) ? 1 : $request->input('district_id')
+            'is_more_info' => $isMoreInfo,
         ];
+
+        if ($isMoreInfo) {
+            $memberData['gender'] = empty($request->input('gender')) ? 1 : $request->input('gender');
+            $memberData['birth_year'] = empty($request->input('birth_year')) ? 1970 : $request->input('birth_year');
+            $memberData['saint_name_of_relativer'] = empty($request->input('saint_name_of_relativer')) ? '' : $request->input('saint_name_of_relativer');
+            $memberData['full_name_of_relativer'] = empty($request->input('full_name_of_relativer')) ? '' : $request->input('full_name_of_relativer');
+            $memberData['birth_year_of_relativer'] = empty($request->input('birth_year_of_relativer')) ? '' : $request->input('birth_year_of_relativer');
+            $memberData['gender_of_relativer'] = empty($request->input('gender_of_relativer')) ? '' : $request->input('gender_of_relativer');
+            $memberData['parish_id'] = empty($request->input('parish_id')) ? 1 : $request->input('parish_id');
+            $memberData['phone_number'] = empty($request->input('phone_number')) ? '' : $request->input('phone_number');
+            $memberData['date_join'] = empty($request->input('date_join')) ? date("Y-m-d H:i:s") : $request->input('date_join');
+            $memberData['image_url'] = empty($request->input('image_url')) ? '' : $request->input('image_url');
+            $memberData['district_id'] = empty($request->input('district_id')) ? 1 : $request->input('district_id');
+        }
 
         Member::create($memberData);
         return $this->succeedResponse(null, 'Thêm người dùng thành công!');
@@ -438,6 +447,7 @@ class MemberController extends Controller
             'saint_name.required' => trans('validation.required', ['field'=> trans('messages.saint_name')]),
             'full_name.required' => trans('validation.required', ['field' => trans('messages.full_name')]),
             'full_name_en.required' => trans('validation.required', ['field', trans('messages.full_name_en')]),
+            'is_more_info.required' => trans('validation.required', ['field' , trans('messages.is_more_info')]),
             'birth_year.numeric' => trans('validation.numeric', ['field'=> trans('messages.birth_year')]),
             'gender.numeric' => trans('validation.numeric', ['field'=> trans('messages.gender')]),
             'saint_name_of_relativer.string' => trans('validation.string', ['field' => trans('messages.saint_name_relativer')]),
@@ -469,7 +479,8 @@ class MemberController extends Controller
             'date_join' => 'nullable|date_format:Y-m-d H:i:s',
             'district_id' => 'nullable|numeric',
             'is_dead' => 'nullable|boolean',
-            'is_inherited' => 'nullable|boolean'
+            'is_inherited' => 'nullable|boolean',
+            'is_more_info' => 'required|boolean'
 
         ], $errorMessages);
 
@@ -483,19 +494,25 @@ class MemberController extends Controller
         $member->full_name = $request->input('full_name');
         $member->full_name_en = $request->input('full_name_en');
         $member->saint_name = $request->input('saint_name');
-        $member->gender = empty($request->input('gender')) ? 1 : $request->input('gender');
-        $member->birth_year = empty($request->input('birth_year')) ? 1970 : $request->input('birth_year');
-        $member->saint_name_of_relativer = empty($request->input('saint_name_of_relativer')) ? '' : $request->input('saint_name_of_relativer');
-        $member->full_name_of_relativer = empty($request->input('full_name_of_relativer')) ? '' : $request->input('full_name_of_relativer');
-        $member->birth_year_of_relativer = empty($request->input('birth_year_of_relativer')) ? 1970 : $request->input('birth_year_of_relativer');
-        $member->gender_of_relativer = empty($request->input('gender_of_relativer')) ? 1 : $request->input('gender_of_relativer');
-        $member->parish_id = empty($request->input('parish_id')) ? 1 : $request->input('parish_id');
-        $member->phone_number = empty($request->input('phone_number')) ? '' : $request->input('phone_number');
-        $member->date_join = empty($request->input('date_join')) ? date('Y-m-d h:i:s') : $request->input('date_join');
-        $member->image_url = empty($request->input('image_url')) ? '' : $request->input('image_url');
-        $member->district_id = empty($request->input('district_id')) ? 1 : $request->input('district_id');
-        $member->is_dead = empty($request->input('is_dead')) ? 1 : $request->input('is_dead');
-        $member->is_inherited = empty($request->input('is_inherited')) ? false : $request->input('is_inherited');
+        $member->is_more_info = $request->input('is_more_info');
+
+        $is_more_info = $request->input('is_more_info');
+
+        if($is_more_info) {
+            $member->gender = empty($request->input('gender')) ? 1 : $request->input('gender');
+            $member->birth_year = empty($request->input('birth_year')) ? 1970 : $request->input('birth_year');
+            $member->saint_name_of_relativer = empty($request->input('saint_name_of_relativer')) ? '' : $request->input('saint_name_of_relativer');
+            $member->full_name_of_relativer = empty($request->input('full_name_of_relativer')) ? '' : $request->input('full_name_of_relativer');
+            $member->birth_year_of_relativer = empty($request->input('birth_year_of_relativer')) ? 1970 : $request->input('birth_year_of_relativer');
+            $member->gender_of_relativer = empty($request->input('gender_of_relativer')) ? 1 : $request->input('gender_of_relativer');
+            $member->parish_id = empty($request->input('parish_id')) ? 1 : $request->input('parish_id');
+            $member->phone_number = empty($request->input('phone_number')) ? '' : $request->input('phone_number');
+            $member->date_join = empty($request->input('date_join')) ? date('Y-m-d h:i:s') : $request->input('date_join');
+            $member->image_url = empty($request->input('image_url')) ? '' : $request->input('image_url');
+            $member->district_id = empty($request->input('district_id')) ? 1 : $request->input('district_id');
+            $member->is_dead = empty($request->input('is_dead')) ? 1 : $request->input('is_dead');
+            $member->is_inherited = empty($request->input('is_inherited')) ? false : $request->input('is_inherited');
+        }
 
         $saved = $member->save();
 

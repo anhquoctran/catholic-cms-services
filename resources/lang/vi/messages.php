@@ -46,6 +46,7 @@ return [
     'email' => 'Địa chỉ email',
     'keyword' => 'Từ khóa',
     'uid' => 'Mã người dùng',
+    'is_more_info' => 'Có thông tin bổ sung',
     // Login
     'login_not_found_data' => 'Đăng nhập thất bại! Tên đăng nhập hoặc mật khẩu không đúng!',
     'access_denied' => 'Đăng nhập thất bại! Tài khoản này đang được đăng nhập tại một thiết bị khác!'
