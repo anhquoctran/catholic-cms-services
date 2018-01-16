@@ -51,7 +51,7 @@ $app->group(['prefix' => 'v1'], function() use($app) {
         /**
          * Diocese Route
          */
-        $app->post('dioceses/fetch_all', 'DioceseController@listDiocese');
+        $app->post('diocese/fetch_all', 'DioceseController@listDiocese');
 
         /**
          * Province route
@@ -92,7 +92,7 @@ $app->group(['prefix' => 'v1'], function() use($app) {
         /**
          * Parish Route
          */
-        $app->group(['prefix' => 'parishs'], function() use($app) {
+        $app->group(['prefix' => 'parish'], function() use($app) {
             $app->post('fetch_all', 'ParishController@listParish');
             $app->post('create', 'ParishController@createParish');
             $app->post('update', 'ParishController@updateParish');
@@ -122,11 +122,6 @@ $app->group(['prefix' => 'v1'], function() use($app) {
                 $app->post('by_year', 'StatisticController@getByYear');
                 $app->post('by_month_and_year', 'StatisticController@getByMonthYear');
             });
-        });
-
-        $app->group(['prefix' => 'clean_up'], function() use($app) {
-            $app->get('all', 'CleanupController@resetAll');
-            $app->get('entity', 'CleanupController@resetTable');
         });
     });
 });

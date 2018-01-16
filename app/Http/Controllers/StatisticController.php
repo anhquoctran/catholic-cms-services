@@ -9,7 +9,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\ContributeHistory;
-use App\Models\LoginHistory;
 use App\Models\Member;
 use App\Models\Parish;
 use App\Models\Diocese;
