@@ -416,6 +416,10 @@ class MemberController extends Controller
             'saint_name' => $request->input('saint_name'),
             'birth_year' => empty($request->input('birth_year')) ? 1970 : $request->input('birth_year'),
             'is_more_info' => $isMoreInfo,
+            'parish_id' => empty($request->input('parish_id')) ? 1 : $request->input('parish_id'),
+            'date_join' => empty($request->input('date_join')) ? date("Y-m-d H:i:s") : $request->input('date_join'),
+            'image_url' => empty($request->input('image_url')) ? '' : $request->input('image_url'),
+            'district_id' => empty($request->input('district_id')) ? 1 : $request->input('district_id')
         ];
 
         if ($isMoreInfo) {
@@ -425,11 +429,7 @@ class MemberController extends Controller
             $memberData['full_name_of_relativer'] = empty($request->input('full_name_of_relativer')) ? '' : $request->input('full_name_of_relativer');
             $memberData['birth_year_of_relativer'] = empty($request->input('birth_year_of_relativer')) ? '' : $request->input('birth_year_of_relativer');
             $memberData['gender_of_relativer'] = empty($request->input('gender_of_relativer')) ? '' : $request->input('gender_of_relativer');
-            $memberData['parish_id'] = empty($request->input('parish_id')) ? 1 : $request->input('parish_id');
-            $memberData['phone_number'] = empty($request->input('phone_number')) ? '' : $request->input('phone_number');
-            $memberData['date_join'] = empty($request->input('date_join')) ? date("Y-m-d H:i:s") : $request->input('date_join');
-            $memberData['image_url'] = empty($request->input('image_url')) ? '' : $request->input('image_url');
-            $memberData['district_id'] = empty($request->input('district_id')) ? 1 : $request->input('district_id');
+
         }
 
         Member::create($memberData);
