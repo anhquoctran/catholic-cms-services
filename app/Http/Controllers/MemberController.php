@@ -353,6 +353,9 @@ class MemberController extends Controller
 
     private static function getNextUuid() {
         $lastMember = Member::where('is_deleted', '<>', IS_DELETED)->orderByDesc('id')->first();
+        if(empty($lastMember)) {
+            return '000001';
+        }
         $uuid = $lastMember->uuid;
         $uuid = substr($uuid, 2);
         $number = (int) $uuid;
