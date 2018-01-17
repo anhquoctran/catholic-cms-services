@@ -414,12 +414,13 @@ class MemberController extends Controller
             'full_name' => $request->input('full_name'),
             'full_name_en' => $request->input('full_name_en'),
             'saint_name' => $request->input('saint_name'),
+            'birth_year' => empty($request->input('birth_year')) ? 1970 : $request->input('birth_year'),
             'is_more_info' => $isMoreInfo,
         ];
 
         if ($isMoreInfo) {
             $memberData['gender'] = empty($request->input('gender')) ? 1 : $request->input('gender');
-            $memberData['birth_year'] = empty($request->input('birth_year')) ? 1970 : $request->input('birth_year');
+
             $memberData['saint_name_of_relativer'] = empty($request->input('saint_name_of_relativer')) ? '' : $request->input('saint_name_of_relativer');
             $memberData['full_name_of_relativer'] = empty($request->input('full_name_of_relativer')) ? '' : $request->input('full_name_of_relativer');
             $memberData['birth_year_of_relativer'] = empty($request->input('birth_year_of_relativer')) ? '' : $request->input('birth_year_of_relativer');
@@ -495,6 +496,12 @@ class MemberController extends Controller
         $member->full_name_en = $request->input('full_name_en');
         $member->saint_name = $request->input('saint_name');
         $member->is_more_info = $request->input('is_more_info');
+        $member->parish_id = empty($request->input('parish_id')) ? 1 : $request->input('parish_id');
+        $member->phone_number = empty($request->input('phone_number')) ? '' : $request->input('phone_number');
+        $member->date_join = empty($request->input('date_join')) ? date('Y-m-d h:i:s') : $request->input('date_join');
+        $member->image_url = empty($request->input('image_url')) ? '' : $request->input('image_url');
+        $member->district_id = empty($request->input('district_id')) ? 1 : $request->input('district_id');
+        $member->is_dead = empty($request->input('is_dead')) ? 0 : $request->input('is_dead');
 
         $is_more_info = $request->input('is_more_info');
 
@@ -505,12 +512,6 @@ class MemberController extends Controller
             $member->full_name_of_relativer = empty($request->input('full_name_of_relativer')) ? '' : $request->input('full_name_of_relativer');
             $member->birth_year_of_relativer = empty($request->input('birth_year_of_relativer')) ? 1970 : $request->input('birth_year_of_relativer');
             $member->gender_of_relativer = empty($request->input('gender_of_relativer')) ? 1 : $request->input('gender_of_relativer');
-            $member->parish_id = empty($request->input('parish_id')) ? 1 : $request->input('parish_id');
-            $member->phone_number = empty($request->input('phone_number')) ? '' : $request->input('phone_number');
-            $member->date_join = empty($request->input('date_join')) ? date('Y-m-d h:i:s') : $request->input('date_join');
-            $member->image_url = empty($request->input('image_url')) ? '' : $request->input('image_url');
-            $member->district_id = empty($request->input('district_id')) ? 1 : $request->input('district_id');
-            $member->is_dead = empty($request->input('is_dead')) ? 1 : $request->input('is_dead');
             $member->is_inherited = empty($request->input('is_inherited')) ? false : $request->input('is_inherited');
         }
 
