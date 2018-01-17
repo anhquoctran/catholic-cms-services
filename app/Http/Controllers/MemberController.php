@@ -354,7 +354,7 @@ class MemberController extends Controller
     private static function getNextUuid() {
         $lastMember = Member::where('is_deleted', '<>', IS_DELETED)->orderByDesc('id')->first();
         if(empty($lastMember)) {
-            return '000001';
+            return 'HV000001';
         }
         $uuid = $lastMember->uuid;
         $uuid = substr($uuid, 2);
@@ -422,17 +422,16 @@ class MemberController extends Controller
             'parish_id' => empty($request->input('parish_id')) ? 1 : $request->input('parish_id'),
             'date_join' => empty($request->input('date_join')) ? date("Y-m-d H:i:s") : $request->input('date_join'),
             'image_url' => empty($request->input('image_url')) ? '' : $request->input('image_url'),
-            'district_id' => empty($request->input('district_id')) ? 1 : $request->input('district_id')
+            'district_id' => empty($request->input('district_id')) ? 1 : $request->input('district_id'),
+            'gender' => empty($request->input('gender')) ? 1 : $request->input('gender'),
+            'phone' => empty($request->input('phone_number')) ? '' : $request->input('phone_number')
         ];
 
         if ($isMoreInfo) {
-            $memberData['gender'] = empty($request->input('gender')) ? 1 : $request->input('gender');
-
             $memberData['saint_name_of_relativer'] = empty($request->input('saint_name_of_relativer')) ? '' : $request->input('saint_name_of_relativer');
             $memberData['full_name_of_relativer'] = empty($request->input('full_name_of_relativer')) ? '' : $request->input('full_name_of_relativer');
             $memberData['birth_year_of_relativer'] = empty($request->input('birth_year_of_relativer')) ? '' : $request->input('birth_year_of_relativer');
             $memberData['gender_of_relativer'] = empty($request->input('gender_of_relativer')) ? '' : $request->input('gender_of_relativer');
-
         }
 
         Member::create($memberData);
