@@ -502,12 +502,12 @@ class MemberController extends Controller
         $member->image_url = empty($request->input('image_url')) ? '' : $request->input('image_url');
         $member->district_id = empty($request->input('district_id')) ? 1 : $request->input('district_id');
         $member->is_dead = empty($request->input('is_dead')) ? 0 : $request->input('is_dead');
-
+        $member->gender = empty($request->input('gender')) ? 1 : $request->input('gender');
+        $member->birth_year = empty($request->input('birth_year')) ? 1970 : $request->input('birth_year');
         $is_more_info = $request->input('is_more_info');
 
         if($is_more_info) {
-            $member->gender = empty($request->input('gender')) ? 1 : $request->input('gender');
-            $member->birth_year = empty($request->input('birth_year')) ? 1970 : $request->input('birth_year');
+
             $member->saint_name_of_relativer = empty($request->input('saint_name_of_relativer')) ? '' : $request->input('saint_name_of_relativer');
             $member->full_name_of_relativer = empty($request->input('full_name_of_relativer')) ? '' : $request->input('full_name_of_relativer');
             $member->birth_year_of_relativer = empty($request->input('birth_year_of_relativer')) ? 1970 : $request->input('birth_year_of_relativer');
