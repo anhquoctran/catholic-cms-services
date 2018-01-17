@@ -12,9 +12,8 @@
 */
 
 
-
-$app->get('test', function() use($app){
-    $app->make('view')->make('index');
+$app->get('/', function () {
+    return redirect('/v1', 200);
 });
 
 /**
