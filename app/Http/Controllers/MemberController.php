@@ -411,6 +411,7 @@ class MemberController extends Controller
         }
 
         $isMoreInfo = $request->input('is_more_info');
+        //dd($request->all());
 
         $memberData = [
             'uuid' => self::getNextUuid(),
@@ -424,8 +425,9 @@ class MemberController extends Controller
             'image_url' => empty($request->input('image_url')) ? '' : $request->input('image_url'),
             'district_id' => empty($request->input('district_id')) ? 1 : $request->input('district_id'),
             'gender' => empty($request->input('gender')) ? 1 : $request->input('gender'),
-            'phone' => empty($request->input('phone_number')) ? '' : $request->input('phone_number')
+            'phone_number' => empty($request->input('phone_number')) ? '' : $request->input('phone_number')
         ];
+        dd($memberData);
 
         if ($isMoreInfo) {
             $memberData['saint_name_of_relativer'] = empty($request->input('saint_name_of_relativer')) ? '' : $request->input('saint_name_of_relativer');
