@@ -427,7 +427,6 @@ class MemberController extends Controller
             'gender' => empty($request->input('gender')) ? 1 : $request->input('gender'),
             'phone_number' => empty($request->input('phone_number')) ? '' : $request->input('phone_number')
         ];
-        dd($memberData);
 
         if ($isMoreInfo) {
             $memberData['saint_name_of_relativer'] = empty($request->input('saint_name_of_relativer')) ? '' : $request->input('saint_name_of_relativer');
