@@ -100,6 +100,17 @@ $app->group(['prefix' => 'v1'], function() use($app) {
             $app->get('get_all', 'ParishController@getAll');
         });
 
+	    /**
+	     * Sub-Parish Route
+	     */
+	    $app->group(['prefix' => 'subparishs'], function () use ($app) {
+	    	$app->post('fetch_all', 'SubparishController@getAlls');
+	    	$app->post('fetch_collection', 'SubparishController@getWithPagination');
+		    $app->post('add', 'SubparishController@add');
+		    $app->post('update', 'SubparishController@update');
+			$app->post('remove', 'SubparishController@remove');
+	    });
+
         /**
          * Statistic Route
          */
@@ -112,7 +123,6 @@ $app->group(['prefix' => 'v1'], function() use($app) {
                 $app->post('get_by_gender', 'MemberController@getMemberByGender');
                 $app->post('get_by_diocese', 'MemberController@getMemberByDiocese');
                 $app->post('get_by_province', 'MemberController@getMemberByProvince');
-
                 $app->post('filter_by', 'MemberController@findByCondition');
             });
 

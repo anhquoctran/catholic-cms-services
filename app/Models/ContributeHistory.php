@@ -27,7 +27,8 @@ class ContributeHistory extends Model
         'datetime_charge',
         'type_charge',
         'token',
-        'id_secretary'
+        'id_secretary',
+	    'note'
     ];
 
     protected $hidden = ['token'];

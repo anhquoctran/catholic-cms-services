@@ -9,13 +9,10 @@
 namespace App\Http\Controllers;
 
 use function date;
-use function dd;
 use Illuminate\Http\Request;
 use App\Models\Member;
 use App\Models\ContributeHistory;
 use const IS_DELETED;
-use function print_r;
-use function response;
 use function substr;
 use function trans;
 use Illuminate\Support\Facades\Validator;
@@ -32,7 +29,7 @@ class MemberController extends Controller
      */
     public function getMembersWithPagination() {
 
-        $listMembers = Member::with('parish.diocese', 'district.province')
+        $listMembers = Member::with('subparish.parish.diocese', 'district.province')
             ->where('is_deleted', '<>', IS_DELETED)
             ->paginate($this->getPaginationPerPage());
 
@@ -40,7 +37,7 @@ class MemberController extends Controller
     }
 
     public function getAllMembers() {
-        $listMembers = Member::with(['parish.diocese', 'district.province'])
+        $listMembers = Member::with(['subparish.parish.diocese', 'district.province'])
             ->where('is_deleted', '<>', IS_DELETED)
             ->get();
 
@@ -64,7 +61,9 @@ class MemberController extends Controller
             return $this->notValidateResponse($validator->errors());
         }
 
-        $user = Member::where('is_deleted', '=', 0)->whereIn('id', $request->input('member_id'))->first();
+        $user = Member::where('is_deleted', '=', 0)
+	        ->whereIn('id', $request->input('member_id'))
+	        ->first();
 
         return $this->succeedResponse($user);
     }
@@ -264,7 +263,8 @@ class MemberController extends Controller
             return $this->notValidateResponse($validator->errors());
         }
 
-        $sql = Member::with('parish.diocese', 'district.province')->where('is_deleted', '<>', IS_DELETED);
+        $sql = Member::with('subparish.parish.diocese', 'district.province')
+	        ->where('is_deleted', '<>', IS_DELETED);
 
         if (!empty($request->input('keyword'))) {
             $keyword = $request->input('keyword');
@@ -272,11 +272,13 @@ class MemberController extends Controller
         }
 
         if (!empty($request->input('diocese_id'))) {
-            $sql->whereHas('parish.diocese', function($q) use($request) {
+            $sql->whereHas('subparish.parish.diocese', function($q) use($request) {
                 $q->where('diocese_id', '=', $request->input('diocese_id'));
             });
         } else if(!empty($request->input('parish_id'))) {
-            $sql->where('parish_id', '=', $request->input('parish_id'));
+            $sql->whereHas('subparish.parish', function($q) use($request) {
+            	$q->where('parish_id', '=', $request->input('parish_id'));
+            });
         }
 
         if(!empty($request->input('province_id'))) {
@@ -303,12 +305,15 @@ class MemberController extends Controller
             'member_id.required' => trans('validation.required', ['field' => trans('messages.member_id')]),
             'datetime_charge.required' => trans('validation.required', ['field' => trans('messages.datetime_charge')]),
             'type_charge.required' => trans('validation.required', ['field' => trans('messages.type_charge')]),
+	        'note.required' => trans('validation.required', ['field' => trans('messages.note')]),
+	        'note.max' => trans('validation.max', ['field' => trans('messages.note')])
         ];
         $validator = Validator::make($request->all(), [
             'balance' => 'required|numeric',
             'member_id' => 'required|numeric',
             'datetime_charge' => 'required|date_format:Y-m-d H:i:s',
-            'type_charge' => 'required|numeric|between:0,1'
+            'type_charge' => 'required|numeric|between:0,1',
+	        'note' => 'required|max:100'
         ], $errorMessages);
 
         if($validator->fails()) {
@@ -338,7 +343,7 @@ class MemberController extends Controller
                 $history = new ContributeHistory();
                 $history->balance = $request->input('balance');
                 $history->id_secretary = $currentUserId;
-                $history->member_id = $member_id;
+                $history->member_id = $member->id;
                 $history->datetime_charge = $datetime_charge;
                 $history->token = $request->header('Authorization');
                 $history->save();
@@ -374,19 +379,22 @@ class MemberController extends Controller
             'full_name_en.required' => trans('validation.required', ['field' => trans('messages.full_name_en')]),
             'birth_year.numeric' => trans('validation.numeric', ['field' => trans('messages.birth_year')]),
             'saint_name.string' => trans('validation.string', ['field' => trans('messages.saint_name')]),
-            'is_more_info.required' => trans('validation.required', ['field' => trans('messages.is_more_info')]),
-            'is_more_info.boolean' => trans('validation.boolean', ['field' => trans('messages.is_more_info')]),
+            'is_single.required' => trans('validation.required', ['field' => trans('messages.is_single')]),
+            'is_single.boolean' => trans('validation.boolean', ['field' => trans('messages.is_single')]),
             'gender.numeric' => trans('validation.numeric', ['field' => trans('messages.gender')]),
             'saint_name_of_relativer.string' => trans('validation.string', ['field' => trans('messages.saint_name_relativer')]),
             'full_name_of_relativer.string' =>trans('validation.string', ['field' => trans('messages.full_name_of_relativer')]),
             'birth_year_of_relativer.string' => trans('validation.string', ['field' => trans('messages.birth_year_relativer')]),
             'gender_of_relativer.numeric' => trans('validation.numeric', ['field' => trans('messages.gender_relativer')]),
-            'parish_id.numeric' =>trans('validation.numeric', ['field' => trans('messages.parish_id')]),
-            'phone_number.string' => trans('validation.string', ['field' => trans('messages.phone')]),
+            'subparish_id.numeric' =>trans('validation.numeric', ['field' => trans('messages.subparish_id')]),
+            'phone_number_primary.string' => trans('validation.string', ['field' => trans('messages.phone_number_primary')]),
+	        'phone_number_secondary.string' => trans('validation.string', ['field' => trans('messages.phone_number_secondary')]),
             'date_join.date' => trans('validation.date', ['field' => trans('messages.date_join')]),
             'image_url.string' => trans('validation.string', ['field' => trans('messages.image_url')]),
-            'district_id.numeric' => trans('validation.numeric', ['field' => trans('messages.district_id')])
+            'district_id.numeric' => trans('validation.numeric', ['field' => trans('messages.district_id')]),
+	        'address.string' => trans('validation.string')
         ];
+
         $validator = Validator::make($request->all(), [
             'full_name' => 'required|string',
             'full_name_en' => 'required|string',
@@ -397,12 +405,14 @@ class MemberController extends Controller
             'full_name_of_relativer' => 'nullable|string',
             'birth_year_of_relativer' => 'nullable|numeric',
             'gender_of_relativer' => 'nullable|numeric',
-            'parish_id' => 'nullable|numeric',
-            'phone_number' => 'nullable|numeric',
+            'subparish_id' => 'nullable|numeric',
+            'phone_number_primary' => 'nullable|string',
             'date_join' => 'nullable|date_format:Y-m-d H:i:s',
             'image_url' => 'nullable|string',
             'district_id' => 'nullable|numeric',
-            'is_more_info' => 'required|boolean'
+            'is_single' => 'required|boolean',
+	        'phone_number_secondary' => "string|nullable",
+	        'address' => 'string|nullable'
 
         ], $errorMessages);
 
@@ -410,8 +420,7 @@ class MemberController extends Controller
             return $this->notValidateResponse($validator->errors());
         }
 
-        $isMoreInfo = $request->input('is_more_info');
-        //dd($request->all());
+        $isSingle = $request->input('is_single');
 
         $memberData = [
             'uuid' => self::getNextUuid(),
@@ -419,20 +428,25 @@ class MemberController extends Controller
             'full_name_en' => $request->input('full_name_en'),
             'saint_name' => $request->input('saint_name'),
             'birth_year' => empty($request->input('birth_year')) ? 1970 : $request->input('birth_year'),
-            'is_more_info' => $isMoreInfo,
-            'parish_id' => empty($request->input('parish_id')) ? 1 : $request->input('parish_id'),
+            'is_single' => $isSingle,
+            'subparish_id' => empty($request->input('subparish_id')) ? 1 : $request->input('subparish_id'),
             'date_join' => empty($request->input('date_join')) ? date("Y-m-d H:i:s") : $request->input('date_join'),
             'image_url' => empty($request->input('image_url')) ? '' : $request->input('image_url'),
             'district_id' => empty($request->input('district_id')) ? 1 : $request->input('district_id'),
             'gender' => empty($request->input('gender')) ? 1 : $request->input('gender'),
-            'phone_number' => empty($request->input('phone_number')) ? '' : $request->input('phone_number')
+            'phone_number_primary' => empty($request->input('phone_number_primary')) ? '' : $request->input('phone_number_primary'),
+            'phone_number_secondary' => empty($request->input('phone_number_secondary')) ? '' : $request->input('phone_number_secondary'),
+            'address' => empty($request->input('address')) ? '' : $request->input('address')
         ];
 
-        if ($isMoreInfo) {
+        if (!$isSingle) {
+        	$memberData['is_single'] = false;
             $memberData['saint_name_of_relativer'] = empty($request->input('saint_name_of_relativer')) ? '' : $request->input('saint_name_of_relativer');
             $memberData['full_name_of_relativer'] = empty($request->input('full_name_of_relativer')) ? '' : $request->input('full_name_of_relativer');
             $memberData['birth_year_of_relativer'] = empty($request->input('birth_year_of_relativer')) ? '' : $request->input('birth_year_of_relativer');
             $memberData['gender_of_relativer'] = empty($request->input('gender_of_relativer')) ? '' : $request->input('gender_of_relativer');
+        } else {
+        	$memberData['is_single'] = true;
         }
 
         Member::create($memberData);
@@ -451,19 +465,22 @@ class MemberController extends Controller
             'saint_name.required' => trans('validation.required', ['field'=> trans('messages.saint_name')]),
             'full_name.required' => trans('validation.required', ['field' => trans('messages.full_name')]),
             'full_name_en.required' => trans('validation.required', ['field', trans('messages.full_name_en')]),
-            'is_more_info.required' => trans('validation.required', ['field' , trans('messages.is_more_info')]),
+            'is_single.required' => trans('validation.required', ['field' , trans('messages.is_single')]),
+	        'is_single.boolean' => trans('validation.boolean', ['field' , trans('messages.is_single')]),
             'birth_year.numeric' => trans('validation.numeric', ['field'=> trans('messages.birth_year')]),
             'gender.numeric' => trans('validation.numeric', ['field'=> trans('messages.gender')]),
             'saint_name_of_relativer.string' => trans('validation.string', ['field' => trans('messages.saint_name_relativer')]),
             'full_name_of_relativer.string' =>trans('validation.string', ['field'=> trans('messages.full_name_of_relativer')]),
             'birth_year_of_relativer.numeric' => trans('validation.numeric', ['field'=> trans('messages.birth_year_relativer')]),
             'gender_of_relativer.numeric' => trans('validation.required', ['field'=> trans('messages.gender_relativer')]),
-            'parish_id.numeric' =>trans('validation.numeric', ['field' => trans('messages.parish_id')]),
-            'phone_number.string' => trans('validation.string', ['field' => trans('messages.phone')]),
+            'subparish_id.numeric' =>trans('validation.numeric', ['field' => trans('messages.subparish_id')]),
+            'phone_number_primary.string' => trans('validation.string', ['field' => trans('messages.phone_number_primary')]),
+	        'phone_number_secondary.string' => trans('validation.string', ['field' => trans('messages.phone_number_secondary')]),
             'date_join.date_format' => trans('validation.date_format', ['field' => trans('messages.date_join')]),
             'district_id.numeric' => trans('validation.numeric', ['field'=> trans('messages.district_id')]),
             'is_dead.boolean' => trans('validation.boolean', ['field' => trans('messages.is_dead')]),
-            'is_inherited.boolean' => trans('validation.boolean', ['field'=> trans('messages.is_inherited')])
+            'is_inherited.boolean' => trans('validation.boolean', ['field'=> trans('messages.is_inherited')]),
+	        'address.string' => trans('validation.string', ['field' => trans('messages.address')])
         ];
 
         $validator = Validator::make($request->all(), [
@@ -477,14 +494,16 @@ class MemberController extends Controller
             'full_name_of_relativer' => 'nullable|string',
             'birth_year_of_relativer' => 'nullable|numeric',
             'gender_of_relativer' => 'nullable|numeric',
-            'parish_id' => 'nullable|numeric',
-            'phone_number' => 'nullable|numeric',
+            'subparish_id' => 'nullable|numeric',
+            'phone_number_primary' => 'nullable|numeric',
+	        'phone_number_secondary' => 'nullable|numeric',
             'image_url' => 'nullable',
             'date_join' => 'nullable|date_format:Y-m-d H:i:s',
             'district_id' => 'nullable|numeric',
             'is_dead' => 'nullable|boolean',
             'is_inherited' => 'nullable|boolean',
-            'is_more_info' => 'required|boolean'
+            'is_single' => 'required|boolean',
+	        'addrress' => 'string|nullable'
 
         ], $errorMessages);
 
@@ -498,26 +517,27 @@ class MemberController extends Controller
         $member->full_name = $request->input('full_name');
         $member->full_name_en = $request->input('full_name_en');
         $member->saint_name = $request->input('saint_name');
-        $member->is_more_info = $request->input('is_more_info');
-        $member->parish_id = empty($request->input('parish_id')) ? 1 : $request->input('parish_id');
-        $member->phone_number = empty($request->input('phone_number')) ? '' : $request->input('phone_number');
+        $member->is_single = $request->input('is_single');
+        $member->subparish_id = $request->input('subparish_id');
+        $member->phone_number_primary = empty($request->input('phone_number_primary')) ? '' : $request->input('phone_number_primary');
+	    $member->phone_number_secondary = empty($request->input('phone_number_secondary')) ? '' : $request->input('phone_number_secondary');
         $member->date_join = empty($request->input('date_join')) ? date('Y-m-d h:i:s') : $request->input('date_join');
         $member->image_url = empty($request->input('image_url')) ? '' : $request->input('image_url');
         $member->district_id = empty($request->input('district_id')) ? 1 : $request->input('district_id');
         $member->is_dead = empty($request->input('is_dead')) ? 0 : $request->input('is_dead');
         $member->gender = empty($request->input('gender')) ? 1 : $request->input('gender');
         $member->birth_year = empty($request->input('birth_year')) ? 1970 : $request->input('birth_year');
-        $is_more_info = $request->input('is_more_info');
+        $member->address = empty($request->input('address')) ? "" : $request->input('address');
+        $is_single = $request->input('is_single');
 
-        if($is_more_info) {
-
-            $member->saint_name_of_relativer = empty($request->input('saint_name_of_relativer')) ? '' : $request->input('saint_name_of_relativer');
-            $member->full_name_of_relativer = empty($request->input('full_name_of_relativer')) ? '' : $request->input('full_name_of_relativer');
-            $member->birth_year_of_relativer = empty($request->input('birth_year_of_relativer')) ? 1970 : $request->input('birth_year_of_relativer');
-            $member->gender_of_relativer = empty($request->input('gender_of_relativer')) ? 1 : $request->input('gender_of_relativer');
-            $member->is_inherited = empty($request->input('is_inherited')) ? false : $request->input('is_inherited');
-        }
-
+        if(!$is_single) {
+	        $member->is_single = 0;
+	        $member->saint_name_of_relativer = empty($request->input('saint_name_of_relativer')) ? '' : $request->input('saint_name_of_relativer');
+	        $member->full_name_of_relativer = empty($request->input('full_name_of_relativer')) ? '' : $request->input('full_name_of_relativer');
+	        $member->birth_year_of_relativer = empty($request->input('birth_year_of_relativer')) ? 1970 : $request->input('birth_year_of_relativer');
+	        $member->gender_of_relativer = empty($request->input('gender_of_relativer')) ? 1 : $request->input('gender_of_relativer');
+	        $member->is_inherited = empty($request->input('is_inherited')) ? false : $request->input('is_inherited');
+        } else $member->is_single = 1;
         $saved = $member->save();
 
         if($saved) {
@@ -529,10 +549,8 @@ class MemberController extends Controller
 
     /**
      * Delete member
-     *
      * @param Request $request
      * @internal param list_member_id
-     *
      * @return bool
      */
     public function deleteMember(Request $request) {

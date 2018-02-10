@@ -18,6 +18,7 @@ use const DESC;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use const IS_DELETED;
+use function print_r;
 use function trans;
 use Illuminate\Support\Facades\Validator;
 
@@ -85,7 +86,8 @@ class StatisticController extends Controller
 
         $histories = ContributeHistory::with(['member.district.province', 'member.parish.diocese', 'secretary'])
             ->whereBetween('datetime_charge', [$from, $to])
-            ->where('member_id', '>', 0);
+            ->where('member_id', '>', 0)
+            ->groupBy('member_id');
 
         switch ($sort) {
             case ASC :
@@ -96,7 +98,7 @@ class StatisticController extends Controller
                 break;
         }
 
-        return $this->succeedResponse($histories->get());
+        return $this->succeedResponse($histories->get(['*', 'sum(balance) as total']));
     }
 
     public function getByYear(Request $request) {
@@ -116,11 +118,19 @@ class StatisticController extends Controller
         $year = $request->input('year');
         $sort = $request->input('sort');
 
-        $histories = ContributeHistory::with(['member.district.province', 'member.parish.diocese', 'secretary'])
+        $histories = ContributeHistory::with(
+        	[
+        		'member.district.province',
+		        'member.parish.diocese',
+		        'secretary'
+	        ]
+        )
             ->whereYear('datetime_charge', '=', $year)
-            ->where('member_id', '>', 0);
+            ->where('member_id', '>', 0)
+            ->groupBy('member_id');
 
-        switch ($sort) {
+
+		switch ($sort) {
             case ASC :
                 $histories = $histories->orderBy('balance');
                 break;
@@ -128,7 +138,6 @@ class StatisticController extends Controller
                 $histories = $histories->orderByDesc('balance');
                 break;
         }
-
         return $this->succeedResponse($histories->get());
     }
 
@@ -155,7 +164,8 @@ class StatisticController extends Controller
         $histories = ContributeHistory::with(['member.district.province', 'member.parish.diocese', 'secretary'])
             ->whereYear('datetime_charge', '=', $year)
             ->whereMonth('datetime_charge', '=', $month)
-            ->where('member_id', '>', 0);
+            ->where('member_id', '>', 0)
+            ->groupBy('member_id');
 
         switch ($sort) {
             case ASC :
@@ -166,7 +176,7 @@ class StatisticController extends Controller
                 break;
         }
 
-        return $this->succeedResponse($histories->get());
+        return $this->succeedResponse($histories->get(['*', 'sum(balance) as total']));
     }
 
     public function getContributeByPerson(Request $request) {
@@ -184,6 +194,7 @@ class StatisticController extends Controller
         }
         $sort = $request->input('sort');
         $histories = ContributeHistory::with(['member.parish.diocese', 'member.district.province', 'secretary'])
+
             ->where('member_id', '>', 0)
             ->whereHas('member', function($query) use($request) {
                 $query->where('id', '=', $request->input('member_id'));

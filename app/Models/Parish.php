@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  * @package App\Models
  * @property mixed $diocese
  * @property mixed $member
+ * @property mixed $subparish
  */
 class Parish extends Model
 {
@@ -49,5 +50,9 @@ class Parish extends Model
 
     public function member() {
         return $this->hasMany('App\Models\Member', 'parish_id', 'id');
+    }
+
+    public function subparish() {
+    	return $this->hasMany('App\Models\Subparish', 'parish_id', 'id');
     }
 }
