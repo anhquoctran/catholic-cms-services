@@ -379,8 +379,6 @@ class MemberController extends Controller
             'full_name_en.required' => trans('validation.required', ['field' => trans('messages.full_name_en')]),
             'birth_year.numeric' => trans('validation.numeric', ['field' => trans('messages.birth_year')]),
             'saint_name.string' => trans('validation.string', ['field' => trans('messages.saint_name')]),
-            'is_single.required' => trans('validation.required', ['field' => trans('messages.is_single')]),
-            'is_single.boolean' => trans('validation.boolean', ['field' => trans('messages.is_single')]),
             'gender.numeric' => trans('validation.numeric', ['field' => trans('messages.gender')]),
             'saint_name_of_relativer.string' => trans('validation.string', ['field' => trans('messages.saint_name_relativer')]),
             'full_name_of_relativer.string' =>trans('validation.string', ['field' => trans('messages.full_name_of_relativer')]),
@@ -410,7 +408,6 @@ class MemberController extends Controller
             'date_join' => 'nullable|date_format:Y-m-d H:i:s',
             'image_url' => 'nullable|string',
             'district_id' => 'nullable|numeric',
-            'is_single' => 'required|boolean',
 	        'phone_number_secondary' => "string|nullable",
 	        'address' => 'string|nullable'
 
@@ -420,15 +417,12 @@ class MemberController extends Controller
             return $this->notValidateResponse($validator->errors());
         }
 
-        $isSingle = $request->input('is_single');
-
         $memberData = [
             'uuid' => self::getNextUuid(),
             'full_name' => $request->input('full_name'),
             'full_name_en' => $request->input('full_name_en'),
             'saint_name' => $request->input('saint_name'),
             'birth_year' => empty($request->input('birth_year')) ? 1970 : $request->input('birth_year'),
-            'is_single' => $isSingle,
             'subparish_id' => empty($request->input('subparish_id')) ? 1 : $request->input('subparish_id'),
             'date_join' => empty($request->input('date_join')) ? date("Y-m-d H:i:s") : $request->input('date_join'),
             'image_url' => empty($request->input('image_url')) ? '' : $request->input('image_url'),
@@ -439,15 +433,11 @@ class MemberController extends Controller
             'address' => empty($request->input('address')) ? '' : $request->input('address')
         ];
 
-        if (!$isSingle) {
-        	$memberData['is_single'] = false;
-            $memberData['saint_name_of_relativer'] = empty($request->input('saint_name_of_relativer')) ? '' : $request->input('saint_name_of_relativer');
-            $memberData['full_name_of_relativer'] = empty($request->input('full_name_of_relativer')) ? '' : $request->input('full_name_of_relativer');
-            $memberData['birth_year_of_relativer'] = empty($request->input('birth_year_of_relativer')) ? '' : $request->input('birth_year_of_relativer');
-            $memberData['gender_of_relativer'] = empty($request->input('gender_of_relativer')) ? '' : $request->input('gender_of_relativer');
-        } else {
-        	$memberData['is_single'] = true;
-        }
+        $memberData['saint_name_of_relativer'] = empty($request->input('saint_name_of_relativer')) ? '' : $request->input('saint_name_of_relativer');
+        $memberData['full_name_of_relativer'] = empty($request->input('full_name_of_relativer')) ? '' : $request->input('full_name_of_relativer');
+        $memberData['birth_year_of_relativer'] = empty($request->input('birth_year_of_relativer')) ? '' : $request->input('birth_year_of_relativer');
+        $memberData['gender_of_relativer'] = empty($request->input('gender_of_relativer')) ? '' : $request->input('gender_of_relativer');
+
 
         Member::create($memberData);
         return $this->succeedResponse(null, 'Thêm người dùng thành công!');
@@ -465,8 +455,6 @@ class MemberController extends Controller
             'saint_name.required' => trans('validation.required', ['field'=> trans('messages.saint_name')]),
             'full_name.required' => trans('validation.required', ['field' => trans('messages.full_name')]),
             'full_name_en.required' => trans('validation.required', ['field', trans('messages.full_name_en')]),
-            'is_single.required' => trans('validation.required', ['field' , trans('messages.is_single')]),
-	        'is_single.boolean' => trans('validation.boolean', ['field' , trans('messages.is_single')]),
             'birth_year.numeric' => trans('validation.numeric', ['field'=> trans('messages.birth_year')]),
             'gender.numeric' => trans('validation.numeric', ['field'=> trans('messages.gender')]),
             'saint_name_of_relativer.string' => trans('validation.string', ['field' => trans('messages.saint_name_relativer')]),
@@ -502,7 +490,7 @@ class MemberController extends Controller
             'district_id' => 'nullable|numeric',
             'is_dead' => 'nullable|boolean',
             'is_inherited' => 'nullable|boolean',
-            'is_single' => 'required|boolean',
+            //'is_single' => 'required|boolean',
 	        'addrress' => 'string|nullable'
 
         ], $errorMessages);
@@ -528,16 +516,11 @@ class MemberController extends Controller
         $member->gender = empty($request->input('gender')) ? 1 : $request->input('gender');
         $member->birth_year = empty($request->input('birth_year')) ? 1970 : $request->input('birth_year');
         $member->address = empty($request->input('address')) ? "" : $request->input('address');
-        $is_single = $request->input('is_single');
-
-        if(!$is_single) {
-	        $member->is_single = 0;
-	        $member->saint_name_of_relativer = empty($request->input('saint_name_of_relativer')) ? '' : $request->input('saint_name_of_relativer');
-	        $member->full_name_of_relativer = empty($request->input('full_name_of_relativer')) ? '' : $request->input('full_name_of_relativer');
-	        $member->birth_year_of_relativer = empty($request->input('birth_year_of_relativer')) ? 1970 : $request->input('birth_year_of_relativer');
-	        $member->gender_of_relativer = empty($request->input('gender_of_relativer')) ? 1 : $request->input('gender_of_relativer');
-	        $member->is_inherited = empty($request->input('is_inherited')) ? false : $request->input('is_inherited');
-        } else $member->is_single = 1;
+        $member->saint_name_of_relativer = empty($request->input('saint_name_of_relativer')) ? '' : $request->input('saint_name_of_relativer');
+        $member->full_name_of_relativer = empty($request->input('full_name_of_relativer')) ? '' : $request->input('full_name_of_relativer');
+        $member->birth_year_of_relativer = empty($request->input('birth_year_of_relativer')) ? 1970 : $request->input('birth_year_of_relativer');
+        $member->gender_of_relativer = empty($request->input('gender_of_relativer')) ? 1 : $request->input('gender_of_relativer');
+        $member->is_inherited = empty($request->input('is_inherited')) ? false : $request->input('is_inherited');
         $saved = $member->save();
 
         if($saved) {

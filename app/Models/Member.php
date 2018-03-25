@@ -63,7 +63,6 @@ class Member extends Model
         'image_url',
         'district_id',
         'is_inherited',
-        'is_single',
 	    'phone_number_secondary',
 	    'address'
     ];

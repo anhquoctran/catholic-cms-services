@@ -45,5 +45,36 @@ return [
         'parish' => 'parishtbl',
         'contribute_history' => 'contributehistorytbl',
         'login_history' => 'loginhistorytbl'
-    ]
+    ],
+
+	'diocese_code' => [
+		'HN' => 'Tổng giáo phận Hà Nội',
+		'BN' => 'Giáo phận Bắc Ninh',
+		'BC' => 'Giáo phận Bùi Chu',
+		'HP' => 'Giáo phận Hải Phòng',
+		'HH' => 'Giáo phận Hưng Hóa',
+		'LS' => 'Giáo phận Lạng Sơn và Cao Bằng',
+		'PD' => 'Giáo phận Phát Diệm',
+		'TB' => 'Giáo phận Thái Bình',
+		'TH' => 'Giáo phận Thanh Hóa',
+		'VI' => 'Giáo phận Vinh',
+		'HU' => 'Tổng giáo phận Huế',
+		'BM' => 'Giáo phận Buôn Mê Thuộc',
+		'DN' => 'Giáo phận Đà Nẵng',
+		'KT' => 'Giáo phận Kontum',
+		'NT' => 'Giáo phận Nha Trang',
+		'QN' => 'Giáo phận Qui Nhơn',
+		'SG' => 'Tổng giáo phận TP. HCM',
+		'BR' => 'Giáo phận Bà Rịa',
+		'CT' => 'Giáo phận Cần Thơ',
+		'DL' => 'Giáo phận Đà Lạt',
+		'LX' => 'Giáo phận Long Xuyên',
+		'MT' => 'Giáo phận Mỹ Tho',
+		'PT' => 'Giáo phận Phan Thiết',
+		'PC' => 'Giáo phận Phú Cường',
+		'VL' => 'Giáo phận Vĩnh Long',
+		'XL' => 'Giáo phận Xuân Lộc',
+		'NN' => 'Giáo phận nước ngoài',
+		'UN' => 'Chưa rõ'
+	]
 ];
