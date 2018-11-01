@@ -25,7 +25,10 @@ $app = new Laravel\Lumen\Application(
 
 $app->withFacades();
 $app->withEloquent();
+$app->configure('services');
+$app->configure('mail');
 
+$app->alias('mailer', \Illuminate\Contracts\Mail\Mailer::class);
 /*
 |--------------------------------------------------------------------------
 | Register Container Bindings
@@ -77,8 +80,12 @@ $app->singleton(
 |
 */
 
-// $app->register(App\Providers\AppServiceProvider::class);
- $app->register(App\Providers\AuthServiceProvider::class);
+$app->register(App\Providers\AppServiceProvider::class);
+$app->register(\Illuminate\Auth\Passwords\PasswordResetServiceProvider::class);
+$app->register(\Illuminate\Mail\MailServiceProvider::class);
+$app->register(Illuminate\Notifications\NotificationServiceProvider::class);
+$app->register(App\Providers\AuthServiceProvider::class);
+$app->register(Appzcoder\LumenRoutesList\RoutesCommandServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 
 /*

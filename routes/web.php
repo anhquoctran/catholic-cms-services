@@ -11,8 +11,13 @@
 |
 */
 
+
+$app->get('/', function () {
+    return redirect('/v1');
+});
+
 /**
- * Login Route
+ * REST API Routing
  */
 
 $app->group(['prefix' => 'v1'], function() use($app) {
@@ -21,6 +26,8 @@ $app->group(['prefix' => 'v1'], function() use($app) {
         return response()->json($array);
     });
 
+    $app->get('get_by_email', 'AuthController@findByEmail');
+    $app->post('forgot_update', 'AuthController@resetPassword');
 
     /**
      * Login Route
@@ -34,8 +41,8 @@ $app->group(['prefix' => 'v1'], function() use($app) {
          */
         $app->group(['prefix' => 'auth'], function() use($app) {
             $app->post('logout', 'AuthController@postLogout');
-            $app->put('display_name', 'AuthController@putDisplayName');
-            $app->put('password', 'AuthController@putPassword');
+            $app->post('display_name', 'AuthController@putDisplayName');
+            $app->post('password', 'AuthController@putPassword');
             $app->post('latest', 'AuthController@getLatest');
             $app->post('history', 'AuthController@getHistory');
         });
@@ -43,7 +50,7 @@ $app->group(['prefix' => 'v1'], function() use($app) {
         /**
          * Diocese Route
          */
-        $app->post('diocese/fetch_all', 'DioceseController@listDiocese');
+        $app->post('dioceses/fetch_all', 'DioceseController@listDiocese');
 
         /**
          * Province route
@@ -64,15 +71,16 @@ $app->group(['prefix' => 'v1'], function() use($app) {
         /**
          * Member route
          */
-        $app->group(['prefix' => 'member'], function () use ($app) {
-            $app->delete('delete', 'MemberController@deleteMember');
+        $app->group(['prefix' => 'members'], function () use ($app) {
+            $app->post('delete', 'MemberController@deleteMember');
             $app->post('fetch_all', 'MemberController@getMembersWithPagination');
             $app->post('search', 'MemberController@search');
             $app->post('create', 'MemberController@addMember');
-            $app->put('update', 'MemberController@updateMember');
-
+            $app->post('update', 'MemberController@updateMember');
+            $app->post('get_charge_history', 'StatisticController@getContributeByPerson');
             $app->post('count', 'MemberController@getTotalMembersAvailable');
             $app->get('get_all', 'MemberController@getAllMembers');
+
         });
 
         /**
@@ -83,14 +91,25 @@ $app->group(['prefix' => 'v1'], function() use($app) {
         /**
          * Parish Route
          */
-        $app->group(['prefix' => 'parish'], function() use($app) {
+        $app->group(['prefix' => 'parishs'], function() use($app) {
             $app->post('fetch_all', 'ParishController@listParish');
             $app->post('create', 'ParishController@createParish');
-            $app->put('update', 'ParishController@updateParish');
-            $app->delete('remove', 'ParishController@removeParish');
-            $app->delete('remove_all', 'ParishController@removeAllParish');
+            $app->post('update', 'ParishController@updateParish');
+            $app->post('remove', 'ParishController@removeParish');
+            $app->post('remove_all', 'ParishController@removeAllParish');
             $app->get('get_all', 'ParishController@getAll');
         });
+
+	    /**
+	     * Sub-Parish Route
+	     */
+	    $app->group(['prefix' => 'subparishs'], function () use ($app) {
+	    	$app->post('fetch_all', 'SubparishController@getAlls');
+	    	$app->post('fetch_collection', 'SubparishController@getWithPagination');
+		    $app->post('add', 'SubparishController@add');
+		    $app->post('update', 'SubparishController@update');
+			$app->post('remove', 'SubparishController@remove');
+	    });
 
         /**
          * Statistic Route
@@ -104,12 +123,13 @@ $app->group(['prefix' => 'v1'], function() use($app) {
                 $app->post('get_by_gender', 'MemberController@getMemberByGender');
                 $app->post('get_by_diocese', 'MemberController@getMemberByDiocese');
                 $app->post('get_by_province', 'MemberController@getMemberByProvince');
+                $app->post('filter_by', 'MemberController@findByCondition');
             });
 
             $app->group(['prefix' => 'contribute'], function() use($app) {
                 $app->post('by_time_range', 'StatisticController@getByTimeRange');
                 $app->post('by_year', 'StatisticController@getByYear');
-                $app->post('by_month_and_year', 'StatisticController@getMonthAndYear');
+                $app->post('by_month_and_year', 'StatisticController@getByMonthYear');
             });
         });
     });

@@ -12,10 +12,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property mixed $parish
  * @property mixed $district
  * @property int $id
  * @property mixed $contribute_history
+ * @property mixed $subparish
  */
 class Member extends Model
 {
@@ -53,20 +53,22 @@ class Member extends Model
         'full_name_of_relativer',
         'birth_year_of_relativer',
         'gender_of_relativer',
-        'parish_id',
+        'subparish_id',
         'balance',
-        'phone_number',
+        'phone_number_primary',
         'date_join',
         'is_deleted',
         'is_dead',
         'description',
         'image_url',
         'district_id',
-        'is_inherited'
+        'is_inherited',
+	    'phone_number_secondary',
+	    'address'
     ];
 
-    public function parish() {
-        return $this->hasOne('App\Models\Parish', 'id', 'parish_id');
+    public function subparish() {
+        return $this->hasOne('App\Models\SubParish', 'id', 'subparish_id');
     }
 
     public function district() {

@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property mixed $district
+ * @property int $id
  */
 class Province extends Model
 {

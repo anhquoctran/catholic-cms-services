@@ -17,6 +17,8 @@ use const DATE_TIME_FORMAT;
 use const DESC;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use const IS_DELETED;
+use function print_r;
 use function trans;
 use Illuminate\Support\Facades\Validator;
 
@@ -28,15 +30,15 @@ class StatisticController extends Controller
             ->where('balance', DB::raw("(select max(`balance`) from membertbl where is_deleted = 0)"))
             ->first();
 
-        $totalOfMembersAvailable = Member::where('is_deleted', '<>', IS_DELETED)
+        $totalOfMembersAvailable = Member::where('is_deleted', '!=', IS_DELETED)
             ->distinct('id')
             ->count();
 
-        $totalOfParishs = Parish::where('is_deleted', '<>', IS_DELETED)
+        $totalOfParishs = Parish::where('is_deleted', '!=', IS_DELETED)
             ->distinct('id')
             ->count();
 
-        $totalOfDioceses = Diocese::where('is_deleted', '<>', IS_DELETED)
+        $totalOfDioceses = Diocese::where('is_deleted', '!=', IS_DELETED)
             ->distinct('id')
             ->count();
 
@@ -84,7 +86,8 @@ class StatisticController extends Controller
 
         $histories = ContributeHistory::with(['member.district.province', 'member.parish.diocese', 'secretary'])
             ->whereBetween('datetime_charge', [$from, $to])
-            ->where('member_id', '>', 0);
+            ->where('member_id', '>', 0)
+            ->groupBy('member_id');
 
         switch ($sort) {
             case ASC :
@@ -95,7 +98,7 @@ class StatisticController extends Controller
                 break;
         }
 
-        return $this->succeedResponse($histories->get());
+        return $this->succeedResponse($histories->get(['*', 'sum(balance) as total']));
     }
 
     public function getByYear(Request $request) {
@@ -115,11 +118,19 @@ class StatisticController extends Controller
         $year = $request->input('year');
         $sort = $request->input('sort');
 
-        $histories = ContributeHistory::with('member')
+        $histories = ContributeHistory::with(
+        	[
+        		'member.district.province',
+		        'member.parish.diocese',
+		        'secretary'
+	        ]
+        )
             ->whereYear('datetime_charge', '=', $year)
-            ->where('member_id', '>', 0);
+            ->where('member_id', '>', 0)
+            ->groupBy('member_id');
 
-        switch ($sort) {
+
+		switch ($sort) {
             case ASC :
                 $histories = $histories->orderBy('balance');
                 break;
@@ -127,7 +138,6 @@ class StatisticController extends Controller
                 $histories = $histories->orderByDesc('balance');
                 break;
         }
-
         return $this->succeedResponse($histories->get());
     }
 
@@ -151,10 +161,11 @@ class StatisticController extends Controller
         $month = $request->input('month');
         $sort = $request->input('sort');
 
-        $histories = ContributeHistory::with('member')
+        $histories = ContributeHistory::with(['member.district.province', 'member.parish.diocese', 'secretary'])
             ->whereYear('datetime_charge', '=', $year)
             ->whereMonth('datetime_charge', '=', $month)
-            ->where('member_id', '>', 0);
+            ->where('member_id', '>', 0)
+            ->groupBy('member_id');
 
         switch ($sort) {
             case ASC :
@@ -165,6 +176,39 @@ class StatisticController extends Controller
                 break;
         }
 
-        return $this->succeedResponse($histories->get());
+        return $this->succeedResponse($histories->get(['*', 'sum(balance) as total']));
+    }
+
+    public function getContributeByPerson(Request $request) {
+        $errorMessages = [
+            'member_id.required' => trans('validation.required', ['field' => trans('messages.member_id')]),
+            'sort.numeric' => trans('validation.numeric', ['field' => trans('messages.sort')])
+        ];
+        $validator = Validator::make($request->all(), [
+            'member_id' => 'required|numeric',
+            'sort' => 'numeric'
+        ], $errorMessages);
+
+        if($validator->fails()) {
+            return $this->notValidateResponse($validator->errors());
+        }
+        $sort = $request->input('sort');
+        $histories = ContributeHistory::with(['member.parish.diocese', 'member.district.province', 'secretary'])
+
+            ->where('member_id', '>', 0)
+            ->whereHas('member', function($query) use($request) {
+                $query->where('id', '=', $request->input('member_id'));
+             });
+
+        switch ($sort) {
+            case ASC :
+                $histories = $histories->orderBy('balance');
+                break;
+            case DESC:
+                $histories = $histories->orderByDesc('balance');
+                break;
+        }
+
+        return $this->succeedPaginationResponse($histories->paginate($this->getPaginationPerPage()));
     }
 }

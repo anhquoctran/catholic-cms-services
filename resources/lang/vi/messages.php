@@ -1,7 +1,7 @@
 <?php
 
 return [
-    // Field
+    // Fields
     'display_name' => 'Tên hiển thị',
     'username' => 'Tên đănng nhập',
     'password' => 'Mât khẩu',
@@ -15,7 +15,6 @@ return [
     'diocese_id' => 'Mã giáo phận',
     'list_member_id' => 'Danh sách mã thành viên',
     'list_parish_id' => 'Danh sách mã giáo xứ',
-
     'query' => 'Từ khóa tìm kiếm',
     'full_name' => 'Họ tên hội viên',
     'full_name_en' => 'Họ tên hội viên không dấu',
@@ -23,7 +22,7 @@ return [
     'saint_name' => 'Tên thánh hội viên',
     'birth_year' => 'Năm sinh hội viên',
     'gender' => 'Giói tính hội viên',
-    'phone' => 'Số điện thoại hội viên',
+    'phone_number_primary' => 'Số điện thoại 1',
     'date_join' => 'Ngày tham gia',
     'image_url' => 'Ảnh đại diện hội viên',
     'saint_name_relativer' => 'Tên thánh người quan hệ',
@@ -42,7 +41,18 @@ return [
     'year' => 'Năm',
     'month' => 'Tháng',
     'entity_name' => 'Tên đối tượng/thực thể',
-
+    'parish_name' => "Tên giáo xứ",
+    'email' => 'Địa chỉ email',
+    'keyword' => 'Từ khóa',
+    'uid' => 'Mã người dùng',
+    'is_single' => 'Độc thân',
     // Login
     'login_not_found_data' => 'Đăng nhập thất bại! Tên đăng nhập hoặc mật khẩu không đúng!',
+    'access_denied' => 'Đăng nhập thất bại! Tài khoản này đang được đăng nhập tại một thiết bị khác!',
+	'subparish_name' => 'Tên giáo họ',
+	'subparish_id' => 'Mã giáo họ',
+	'phone_number_secondary' => 'Số điện thoại 2',
+	'list_subparish_id' => 'Danh sách giáo họ',
+	'address' => "Địa chỉ",
+	'note' => 'Chú thích'
 ];

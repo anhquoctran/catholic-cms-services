@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use function dd;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\LoginHistory;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use function sha1;
+use function tidy_get_html_ver;
+use function trans;
 use Validator;
 use Carbon\Carbon;
+use function var_dump;
 
 /**
  * Class ExampleController
@@ -42,7 +46,14 @@ class AuthController extends Controller
             return $this->notValidateResponse($validator->errors());
         }
 
-        $user = User::where('username', $request->input('username'))->first();
+        $user = User::where('username', $request->input('username'))
+            ->orWhere('email', '=', $request->input('username'))->first();
+
+        $token = $user->access_token;
+
+        if(!$this->isNullOrEmptyString($token)) {
+            return $this->failResponse(Response::HTTP_FORBIDDEN,[trans('messages.access_denied')]);
+        }
 
         if (empty($user)) {
             return $this->failResponse(Response::HTTP_BAD_REQUEST, [trans('messages.login_not_found_data')]);
@@ -97,10 +108,13 @@ class AuthController extends Controller
         $errorMessages = [
             'new_name.required' => trans('validation.required', ['field' => trans('messages.display_name')]),
             'new_name.max' => trans('validation.max.string', ['field' => trans('messages.display_name')]),
+            'new_email.required' => trans('validation.required', ['field' => trans('messages.email')]),
+            'new_email.max' => trans('validation.max.string', ['field' => trans('messages.email')]),
         ];
 
         $validator = Validator::make($request->all(), [
             'new_name' => 'required|max:64',
+            'new_email' => 'required|max:64'
         ], $errorMessages);
 
         if ($validator->fails()) {
@@ -109,6 +123,7 @@ class AuthController extends Controller
 
         $user = User::find(app('auth')->user()->id);
         $user->display_name = $request->input('new_name');
+        $user->email = $request->input('email');
         $user->save();
 
         return $this->succeedResponse($user);
@@ -124,12 +139,14 @@ class AuthController extends Controller
      */
     public function putPassword(Request $request)
     {
+        //dd($request->all());
         $errorMessages = [
-            'new_password.required' => trans('validation.required', ['field' => trans('messages.password')]),
+
+            'new_pass.required' => trans('validation.required', ['field' => trans('messages.password')]),
         ];
 
         $validator = Validator::make($request->all(), [
-            'new_password' => 'required',
+            'new_pass' => 'required',
         ], $errorMessages);
 
         if ($validator->fails()) {
@@ -137,7 +154,7 @@ class AuthController extends Controller
         }
 
         $user = User::find(app('auth')->user()->id);
-        $user->password = Hash::make(base64_decode(base64_decode($request->input('new_password'))));
+        $user->password = Hash::make(base64_decode(base64_decode($request->input('new_pass'))));
         $user->save();
 
         return $this->succeedResponse($user);
@@ -200,5 +217,60 @@ class AuthController extends Controller
         }
 
         return $this->succeedPaginationResponse($listLoginHistory->paginate($this->getPaginationPerPage()));
+    }
+
+    public function findByEmail(Request $request) {
+
+        $errorMessages = [
+            'email.required' => trans('validation.required', ['field' => trans('messages.email')]),
+            'email.email' => trans('validation.email', ['field' => trans('messages.email')])
+        ];
+
+        //return response()->json($request->only('email'));
+        $validator = Validator::make($request->only('email'), [
+            'email' => 'required|email|max:64',
+        ], $errorMessages);
+
+        if($validator->fails()) {
+            return $this->notValidateResponse($validator->errors());
+        }
+
+        $member = User::where('email', '=', $request->query('email'))->first();
+        if(!empty($member)) {
+            return $this->succeedResponse(['id' => $member->id, 'display_name' => $member->display_name]);
+        } else {
+            return $this->failResponse(404, 'Địa chỉ email đã gửi không tồn tại trong hệ thống!');
+        }
+    }
+
+    public function resetPassword(Request $request) {
+        $errorMessages = [
+            'new_password.required' => trans('validation.required', ['field' => trans('messages.password')]),
+            'uid.required' => trans('validation.required', ['field' => trans('messages.uid')]),
+            'uid.numeric' => trans('validation.numeric', ['field' => trans('messages.uid')])
+        ];
+
+        $validator = Validator::make($request->all(), [
+            'new_password' => 'required|string|max:64',
+            'uid' => 'required|numeric'
+        ], $errorMessages);
+
+        if($validator->fails()) {
+            return $this->notValidateResponse($validator->errors());
+        }
+
+        $user = User::find($request->input('uid'));
+        if(!empty($user)) {
+            $user->password = Hash::make(base64_decode(base64_decode($request->input('new_password'))));;
+            $saved = $user->save();
+            if($saved) {
+                return $this->succeedResponse(null, 'Cập nhật mật khẩu mới thành công!');
+            }
+            else {
+                return $this->failResponse(400, 'Thay đổi mật khẩu thất bại!');
+            }
+        } else {
+            return $this->failResponse(404, 'Cập nhật mật khẩu mới thất bại! Không tìm thấy người dùng này');
+        }
     }
 }

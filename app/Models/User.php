@@ -3,14 +3,20 @@
 namespace App\Models;
 
 use Illuminate\Auth\Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 
-class User extends Model implements AuthenticatableContract, AuthorizableContract
+/**
+ * @property int $id
+ */
+class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract
 {
-    use Authenticatable, Authorizable;
+    use Authenticatable, Authorizable, CanResetPassword, Notifiable;
 
     /**
      * The table associated with the model.
@@ -25,7 +31,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'username', 'display_name',
+        'username', 'display_name', 'email'
     ];
 
     /**
@@ -46,5 +52,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function contributeHistory() {
         return $this->hasMany('App\Models\ContributeHistory', 'id_secretary', 'id');
+    }
+
+    public function sendPasswordResetNotification($token) {
+        // do your callback here
     }
 }
